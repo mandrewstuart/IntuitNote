@@ -1,0 +1,21 @@
+{
+    "rules": {
+        "linebreak-style": [
+            2,
+            "unix"
+        ],
+        "comma-dangle": [
+          2,
+          "always-multiline"
+        ],
+        "no-console": 0
+    },
+    "env": {
+        "es6": true,
+        "browser": true
+    },
+    "extends": "eslint:recommended",
+    "ecmaFeatures": {
+        "modules": true
+    }
+}
