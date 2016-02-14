@@ -25,6 +25,7 @@ module.exports = {
         loaders: [ 'react-hot', 'babel' ],
         include: path.join(__dirname, 'src'),
       },
+      { test: /\.styl$/, loader: 'style-loader!css-loader!stylus-loader' }
     ],
   },
   resolve: {
@@ -35,7 +36,7 @@ module.exports = {
        utils: 'src/utils',
        config: path.join(__dirname, 'config', process.env.NODE_ENV),
      },
-     extensions: ['', '.js'],
+     extensions: ['', '.js', '.styl'],
   },
   node: {
     fs: 'empty',

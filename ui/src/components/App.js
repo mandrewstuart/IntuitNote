@@ -1,24 +1,30 @@
 import React, { Component, Children, cloneElement, PropTypes } from 'react'
 import { Link } from 'react-router'
+import io from 'socket.io-client'
 
 /*----------------------------------------------------------------------------*/
 
 import auth from '../auth'
 import { domain } from 'config'
-import io from 'socket.io-client'
+
+/*----------------------------------------------------------------------------*/
+
+import AuthModal from 'components/AuthModal'
+import Dialog from 'material-ui/lib/dialog';
 
 /*----------------------------------------------------------------------------*/
 
 let socket = io(`${domain}:8080`)
 
 export default class App extends Component {
-  static contextTypes = { history: PropTypes.object };
+  static contextTypes = { router: PropTypes.object };
 
   constructor (props) {
     super(props)
     this.state = {
       loggedIn: auth.loggedIn(),
       user: { email: localStorage.userEmail },
+      authModalOpen: false,
     }
   }
 
@@ -28,13 +34,10 @@ export default class App extends Component {
         this.setState({
           loggedIn: response.success,
           user: response.user,
+          authModalOpen: false,
         })
 
-        let nextPathname = this.props.location.state
-          ? this.props.location.state.nextPathname
-          : `/`
-
-        this.context.history.pushState(null, nextPathname)
+        this.context.router.replace(`/dashboard`)
       } else {
         this.setState({
           message: response.message,
@@ -49,6 +52,9 @@ export default class App extends Component {
     this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
+  openAuthModal = () => this.setState({ authModalOpen: true })
+  closeAuthModal = () => this.setState({ authModalOpen: false })
+
   render() {
     let children = Children.map(this.props.children, child => {
       return cloneElement(child, {
@@ -57,23 +63,24 @@ export default class App extends Component {
         ...this.state,
         setAuth: this.setAuth,
         login: this.login,
+        openAuthModal: this.openAuthModal,
+        closeAuthModal: this.closeAuthModal,
         socket,
       })
     })
 
     return (
       <div>
-        <div className = "z-depth-2">
-          <Link to = "/">ADE</Link>
-
-          { this.state.loggedIn &&
-          <div>
-            <span>Welcome, { this.state.user.email }</span>
-            <a onClick = { this.logout }>Log out</a>
-          </div>
-          }
-        </div>
-        
+        <Dialog
+          className = "auth-modal"
+          open = { this.state.authModalOpen }
+          onRequestClose = { this.handleClose }
+        >
+          <AuthModal
+            closeAuthModal = { this.closeAuthModal }
+            login = { this.login }
+          />
+        </Dialog>
         { children }
       </div>
     )

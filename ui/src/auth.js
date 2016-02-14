@@ -24,6 +24,8 @@ export default {
 
     let { success, message, token, user } = await response.json()
 
+    console.log(success)
+
     if (success) {
       localStorage.token = token
       localStorage.userId = user._id
