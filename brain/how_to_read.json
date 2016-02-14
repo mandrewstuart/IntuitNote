@@ -1,0 +1,94 @@
+reading subjects
+
+{"subjects": [
+	{"name": "subject_name1", "id": 1},
+	{"name": "subject_name2", "id": 2}
+	]
+}
+
+
+
+reading a subject (getting documents)
+
+{"subject": {
+	"name": "subject_name1",
+	"id": 1,
+	"documents": [
+		{"name": "document_name1", "id": 1},
+		{"name": "document_name2", "id": 2}
+	]
+	}
+}
+
+
+
+reading a document
+
+{"document":{
+	"in_subject_name": "subject_name1",
+	"in_subject_id": 1,
+	"sentences": [
+		{"value": "sentence_value1", "id": 1, "tag_value": "tag1", "tag_id": 1},
+		{"value": "sentence_value2", "id": 2}
+	]
+	}
+}
+
+
+
+reading a sentence
+
+{"sentence":{
+	"value": "sentence_value1",
+	"id": 1,
+	"tag_value": "tag1",
+	"tag_id": 1
+	}
+}
+
+
+reading all tags per subject
+
+{"tags_by_subject": {
+	"subject_name": "subject_name1",
+	"subject_id": 1,
+	"documents": [
+		{"document_name": "document_name1", "document_id": 1, "tagged_sentences": [
+			{"sentence_id": 1, "sentence_value": "value1", "tag_id": 1, "tag_value": "value1"},
+			{"sentence_id": 2, "sentence_value": "value2", "tag_id": 2, "tag_value": "value2"},
+			{"sentence_id": 3, "sentence_value": "value3", "tag_id": 3, "tag_value": "value3"},
+			{"sentence_id": 5, "sentence_value": "value5", "tag_id": 4, "tag_value": "value4"},
+			]
+		},
+		{"document_name": "document_name2", "document_id": 2, "tagged_sentences": [
+			{"sentence_id": 8, "sentence_value": "value8", "tag_id": 5, "tag_value": "value5"},
+			{"sentence_id": 13, "sentence_value": "value13", "tag_id": 6, "tag_value": "value6"},
+			{"sentence_id": 21, "sentence_value": "value21", "tag_id": 7, "tag_value": "value7"},
+			{"sentence_id": 34, "sentence_value": "value34", "tag_id": 8, "tag_value": "value8"},
+			]
+		}
+	]
+	}
+}
+
+
+
+reading all tags in a document
+
+{"document":{
+	"document_name": "document_name1",
+	"document_id": 1,
+	"tagged_sentences": [
+		{"sentence_id": 1, "sentence_value": "value1", "tag_id": 1, "tag_value": "value1"},
+		{"sentence_id": 2, "sentence_value": "value2", "tag_id": 2, "tag_value": "value2"},
+		{"sentence_id": 3, "sentence_value": "value3", "tag_id": 3, "tag_value": "value3"},
+		{"sentence_id": 5, "sentence_value": "value5", "tag_id": 4, "tag_value": "value4"},
+		]
+	}
+}
+
+
+
+getting suggested tags in a document
+
+IDENTICAL TO GETTING ALL TAGS IN A DOCUMENT
