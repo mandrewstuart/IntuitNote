@@ -5,7 +5,7 @@ let email, password
 export default ({
   login,
   closeAuthModal,
-  errorMessage,
+  message,
 }) =>
   <div className = "content"
     style = {{
@@ -44,6 +44,6 @@ export default ({
           Register
         </button>
       </div>
-      <div className = "error">{ errorMessage }</div>
+      <div className = "error">{ message }</div>
     </div>
   </div>

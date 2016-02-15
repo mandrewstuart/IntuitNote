@@ -48,12 +48,12 @@ export default class App extends Component {
 
   logout = () => {
     localStorage.clear()
-    this.context.history.pushState(null, `/login`)
+    this.context.router.replace(`/`)
     this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
   openAuthModal = () => this.setState({ authModalOpen: true })
-  closeAuthModal = () => this.setState({ authModalOpen: false })
+  closeAuthModal = () => this.setState({ authModalOpen: false, message: `` })
 
   render() {
     let children = Children.map(this.props.children, child => {
@@ -63,6 +63,7 @@ export default class App extends Component {
         ...this.state,
         setAuth: this.setAuth,
         login: this.login,
+        logout: this.logout,
         openAuthModal: this.openAuthModal,
         closeAuthModal: this.closeAuthModal,
         socket,
@@ -70,7 +71,7 @@ export default class App extends Component {
     })
 
     return (
-      <div>
+      <div id="app">
         <Dialog
           className = "auth-modal"
           open = { this.state.authModalOpen }
@@ -79,6 +80,7 @@ export default class App extends Component {
           <AuthModal
             closeAuthModal = { this.closeAuthModal }
             login = { this.login }
+            message = { this.state.message }
           />
         </Dialog>
         { children }

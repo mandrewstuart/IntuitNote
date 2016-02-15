@@ -1,11 +1,14 @@
 import React from 'react'
 
-export default () =>
+export default ({
+  logout,
+  user
+}) =>
   <div className = "app dashboard">
     <div className = "sidebar">
       <div className = "greeting">
         <i className = "fa fa-user" />
-        <span>Welcome, user123</span>
+        <span>{ user.email }</span>
       </div>
       <div className = "subject-nav">
         <div className = "subject-nav-item">
@@ -17,7 +20,9 @@ export default () =>
 
     <div className = "main-area">
       <div className = "top-row">
-        <a className = "sign-out">Sign Out</a>
+        <a className = "sign-out"
+          onClick = { logout }
+        >Sign Out</a>
         <a className = "account-settings">Account Settings</a>
       </div>
     </div>
