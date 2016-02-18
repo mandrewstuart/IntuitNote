@@ -22,11 +22,11 @@ export default ({
            *  TODO: hash password
            */
 
-          let user = new User({ email, password })
+          let user = new User({ email, password, plan: `free` })
 
-          user.save(err => {
+          user.save((err, user) => {
             if (err) throw err
-            res.json({ success: true })
+            res.json({ success: true, user })
           })
         }
       })

@@ -9,7 +9,7 @@ import { domain } from 'config'
 
 /*----------------------------------------------------------------------------*/
 
-import AuthModal from 'components/AuthModal'
+import Modals from 'components/Modals'
 import Dialog from 'material-ui/lib/dialog';
 
 /*----------------------------------------------------------------------------*/
@@ -24,27 +24,25 @@ export default class App extends Component {
     this.state = {
       loggedIn: auth.loggedIn(),
       user: { email: localStorage.userEmail },
-      authModalOpen: false,
+      modalOpen: false,
+      ModalComponent: Modals[`auth`],
     }
   }
 
-  login = (type, { email, password }) => {
+  login = (type, { email, password }) =>
     auth[type]({ email, password }, response => {
       if (response.success) {
         this.setState({
           loggedIn: response.success,
           user: response.user,
-          authModalOpen: false,
+          modalOpen: false,
         })
 
         this.context.router.replace(`/dashboard`)
-      } else {
-        this.setState({
-          message: response.message,
-        })
       }
-    })
-  };
+
+      else this.setState({ message: response.message })
+    });
 
   logout = () => {
     localStorage.clear()
@@ -52,10 +50,15 @@ export default class App extends Component {
     this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
-  openAuthModal = () => this.setState({ authModalOpen: true })
-  closeAuthModal = () => this.setState({ authModalOpen: false, message: `` })
+  openModal = modal => 
+    this.setState({ modalOpen: true, ModalComponent: Modals[modal] });
+
+  closeModal = () =>
+    this.setState({ modalOpen: false, message: `` });
 
   render() {
+    let { ModalComponent } = this.state
+
     let children = Children.map(this.props.children, child => {
       return cloneElement(child, {
         ...child.props,
@@ -64,8 +67,8 @@ export default class App extends Component {
         setAuth: this.setAuth,
         login: this.login,
         logout: this.logout,
-        openAuthModal: this.openAuthModal,
-        closeAuthModal: this.closeAuthModal,
+        openModal: this.openModal,
+        closeModal: this.closeModal,
         socket,
       })
     })
@@ -73,16 +76,17 @@ export default class App extends Component {
     return (
       <div id="app">
         <Dialog
-          className = "auth-modal"
-          open = { this.state.authModalOpen }
-          onRequestClose = { this.handleClose }
+          className="auth-modal"
+          open={ this.state.modalOpen }
+          onRequestClose={ this.handleClose }
         >
-          <AuthModal
-            closeAuthModal = { this.closeAuthModal }
-            login = { this.login }
-            message = { this.state.message }
+          <ModalComponent
+            closeModal={ this.closeModal }
+            login={ this.login }
+            message={ this.state.message }
           />
         </Dialog>
+
         { children }
       </div>
     )

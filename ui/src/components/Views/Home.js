@@ -5,7 +5,7 @@ export default ({
   logout,
   loggedIn,
   user,
-  openAuthModal,
+  openModal,
 }) =>
   <div>
     <div className="header z-depth-1">
@@ -14,7 +14,7 @@ export default ({
       <div className="menu">
         <a className="hvr-underline-from-right">Pricing</a>
         { loggedIn ||
-        <a className="hvr-underline-from-left" onClick={ openAuthModal }>
+        <a className="hvr-underline-from-left" onClick={ () => openModal(`auth`) }>
           Login / Register
         </a>
         }
