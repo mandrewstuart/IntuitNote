@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/user'
 
 export default ({
-  apiRoutes,
+  api,
   app,
 }) => {
   app.post(`/signup`, (req, res) => {
@@ -36,7 +36,7 @@ export default ({
     })
   })
 
-  apiRoutes.post(`/authenticate`, (req, res) => {
+  api.post(`/authenticate`, (req, res) => {
 
     let { email, password } = req.body
 
@@ -57,6 +57,8 @@ export default ({
             expiresInMinutes: 1440, // expires in 24 hours
           })
 
+          // TODO: fetch user subjects and send to client
+
           res.json({
             success: true,
             message: 'Enjoy your token!',
@@ -68,7 +70,7 @@ export default ({
     })
   })
 
-  apiRoutes.use((req, res, next) => {
+  api.use((req, res, next) => {
 
     let token = req.body.token
 

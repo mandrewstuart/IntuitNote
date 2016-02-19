@@ -4,9 +4,14 @@ import { auth } from './auth'
 
 export default ({ app, io }) => {
 
-  let apiRoutes = express.Router()
+  let api = express.Router()
 
-  auth({ app, apiRoutes })
+  auth({ app, api })
 
-  return apiRoutes
+  api.post(`/newSubject`, (req, res) => {
+    let { userEmail, title } = req.body
+    res.json({ subjectId: 'blah' })
+  })
+
+  return api
 }

@@ -1,6 +1,4 @@
 import React, { Component, Children, cloneElement, PropTypes } from 'react'
-import { Link } from 'react-router'
-import io from 'socket.io-client'
 
 /*----------------------------------------------------------------------------*/
 
@@ -15,6 +13,7 @@ import Dialog from 'material-ui/lib/dialog'
 
 /*----------------------------------------------------------------------------*/
 
+import io from 'socket.io-client'
 let socket = io(`${domain}:8080`)
 
 export default class App extends Component {
@@ -23,12 +22,37 @@ export default class App extends Component {
   constructor (props) {
     super(props)
     this.state = {
+
+      /*
+       *  User State
+       */
+
       loggedIn: auth.loggedIn(),
       user: { email: localStorage.userEmail },
-      modalOpen: false,
+      subjects: [],
+
+      /*
+       *  UI State
+       */
+
       ModalComponent: Modals[`auth`],
+      modalOpen: false,
     }
   }
+
+  /*
+   *  UI State Logic
+   */
+
+   openModal = modal =>
+     this.setState({ modalOpen: true, ModalComponent: Modals[modal] });
+
+   closeModal = () =>
+     this.setState({ modalOpen: false, message: `` });
+
+  /*
+   *  Auth Logic
+   */
 
   login = (type, { email, password }) => {
     if (!isAValidEmail(email))
@@ -36,10 +60,14 @@ export default class App extends Component {
 
     auth[type]({ email, password }, response => {
       if (response.success) {
+
+        // TODO: load subjects
+
         this.setState({
           loggedIn: response.success,
           user: response.user,
           modalOpen: false,
+          message: ``,
         })
 
         this.context.router.replace(`/dashboard`)
@@ -55,11 +83,50 @@ export default class App extends Component {
     this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
-  openModal = modal =>
-    this.setState({ modalOpen: true, ModalComponent: Modals[modal] });
+  /*
+   *  User Logic
+   */
 
-  closeModal = () =>
-    this.setState({ modalOpen: false, message: `` });
+  createSubject = async ({ title }) => {
+    if (!title) return this.setState({ message: `Please name your subject!` })
+
+    let response = await fetch(`${domain}:8080/api/newSubject`, {
+      method: `POST`,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: localStorage.token,
+        userEmail: localStorage.userEmail,
+        title,
+      }),
+    })
+
+    let data = await response.json()
+
+    this.setState({
+      subjects: [
+        ...this.state.subjects.map(s => ({ ...s, active: false })),
+        {
+          title,
+          active: true,
+          createdDate: +new Date(),
+          updatedDate: +new Date(),
+          docs: [],
+        },
+      ],
+      message: ``,
+      modalOpen: false,
+    })
+  };
+
+  setSubject = title => {
+    /*
+     *  TODO: fetch subject from server
+     */
+
+    this.setState({
+      subjects: this.state.subjects.map(s => ({ ...s, active: s.title === title })),
+    })
+  }
 
   render() {
     let { ModalComponent } = this.state
@@ -69,11 +136,11 @@ export default class App extends Component {
         ...child.props,
         ...this.props,
         ...this.state,
-        setAuth: this.setAuth,
         login: this.login,
         logout: this.logout,
         openModal: this.openModal,
         closeModal: this.closeModal,
+        setSubject: this.setSubject,
         socket,
       })
     })
@@ -89,6 +156,9 @@ export default class App extends Component {
             closeModal={ this.closeModal }
             login={ this.login }
             message={ this.state.message }
+
+            // conditionally add these
+            createSubject={ this.createSubject }
           />
         </Dialog>
 

@@ -1,0 +1,38 @@
+.greeting
+  padding-left 1.5rem
+  font-size 1.2rem
+
+  .welcome
+    color rgb(154, 209, 174)
+    font-size 0.95rem
+
+  i
+    margin-right 0.75rem
+
+.subject-nav
+  margin-top 2rem
+
+.subject-nav-item
+  color rgb(202, 230, 225)
+  padding 0.6rem 0 0.6rem 1.5rem
+  background-color rgb(59, 85, 71)
+  display flex
+  align-items center
+  transition all 0.25s ease
+  cursor pointer
+
+  &.active
+    background-color #467170
+
+.subject-nav-item + .subject-nav-item
+  border-top 4px solid #30473a
+
+.subject-nav-item a
+  color rgb(202, 230, 225)
+
+.subject-nav-item i
+  margin-left auto
+  padding-right 1rem
+
+.subject-nav-item:not(.active):hover
+  background-color rgb(61, 103, 81)

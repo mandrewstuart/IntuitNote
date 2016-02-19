@@ -4,6 +4,7 @@ let title
 
 export default ({
   closeModal,
+  createSubject,
   message,
 }) =>
   <div className="new-subject modal-content">

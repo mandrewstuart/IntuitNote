@@ -2,6 +2,8 @@
 @import 'hover'
 @import 'modal'
 @import 'button'
+@import 'sidebar'
+@import 'dashboard'
 
 html, body, #root, #app, .dashboard
   width 100%
@@ -97,39 +99,6 @@ a
 .main-area
   width calc(100vw - 20rem)
 
-.greeting
-  padding-left 1.5rem
-  font-size 1.2rem
-
-  .welcome
-    color rgb(154, 209, 174)
-    font-size 0.95rem
-
-  i
-    margin-right 0.75rem
-
-.subject-nav
-  margin-top 2rem
-
-.subject-nav-item
-  color rgb(202, 230, 225)
-  padding 0.6rem 0 0.6rem 1.5rem
-  background-color rgb(59, 85, 71)
-  display flex
-  align-items center
-  transition all 0.25s ease
-  cursor pointer
-
-.subject-nav-item a
-  color rgb(202, 230, 225)
-
-.subject-nav-item i
-  margin-left auto
-  padding-right 1rem
-
-.subject-nav-item:hover
-  background-color: rgb(61, 103, 81)
-
 .top-row
   display: flex
   flex-direction: row-reverse
@@ -164,12 +133,3 @@ a
 .underline
   padding-bottom 0.4rem
   border-bottom 2px solid rgb(201, 52, 31)
-
-.start-message
-  font-size 1.5rem
-  padding 3.5rem
-  color rgb(30, 98, 48)
-
-  i
-    font-size 2rem
-    transform scaleX(2) translateX(-10px)
