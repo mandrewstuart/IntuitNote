@@ -29,10 +29,13 @@ export default ({
         <div className="title-row">
           <div className="subject-title">
             { editingSubject
-              ? <input type="text" defaultValue={ s.title } />
+              ? <input autoFocus type="text" defaultValue={ s.title } />
               : s.title
             }
-            <i onClick={ toggleSubjectEditing } className="fa fa-edit" />
+            <i
+              onClick={ toggleSubjectEditing }
+              className={ `fa fa-${editingSubject ? `check` : `edit`}` }
+            />
           </div>
           <button
             className="delete-btn"
