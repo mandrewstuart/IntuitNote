@@ -4,6 +4,8 @@
 @import 'button'
 @import 'sidebar'
 @import 'dashboard'
+@import 'util'
+@import 'dropzone'
 
 html, body, #root, #app, .dashboard
   width 100%
@@ -53,13 +55,19 @@ a
   font-weight: 300
   padding: 1rem
 
-.login-form > * + *
+.form
+  display flex
+  flex-direction column
+  justify-content center
+  align-items center
+
+.login.form > * + *
   margin-top 1rem
 
-.login-form *
+.login.form *
   width 100%
 
-.login-form input
+.login.form input
   padding 0.5rem 0.9rem
 
 .slogan
@@ -72,6 +80,7 @@ a
   line-height 0.8
 
 .button-row
+  width 100%
   display flex
   justify-content center
   margin-top 1.5rem

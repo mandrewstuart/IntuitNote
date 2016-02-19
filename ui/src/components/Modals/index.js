@@ -1,7 +1,9 @@
 import AuthModal from './AuthModal'
 import NewSubject from './NewSubject'
+import Confirm from './Confirm'
 
 export default {
-  'auth': AuthModal,
-  'newSubject': NewSubject,
+  AuthModal,
+  NewSubject,
+  Confirm,
 }

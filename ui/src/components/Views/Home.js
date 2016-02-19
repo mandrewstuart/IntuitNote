@@ -15,7 +15,7 @@ export default ({
         <a className="hvr-underline-from-right">About</a>
         <a className="hvr-underline-from-right">Pricing</a>
         { loggedIn ||
-        <a className="hvr-underline-from-left" onClick={ () => openModal(`auth`) }>
+        <a className="hvr-underline-from-left" onClick={ () => openModal(`AuthModal`) }>
           Login / Register
         </a>
         }

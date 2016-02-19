@@ -9,14 +9,7 @@ export default ({
 }) =>
   <div className="auth modal-content">
     <div className="close-btn" onClick={ closeModal }>CLOSE ✕</div>
-    <div className="login-form"
-      style={{
-        display: `flex`,
-        flexDirection: `column`,
-        justifyContent: `center`,
-        alignItems: `center,`,
-      }}
-    >
+    <div className="login form">
       <input ref={ node => email = node } type="text" placeholder="E-mail address.." />
       <input ref={ node => password = node } type="password" placeholder="Password.." />
 

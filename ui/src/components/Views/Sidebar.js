@@ -7,6 +7,7 @@ export default ({
   setSubject,
 }) =>
 <div className="sidebar">
+  <div className="logo center">ADE</div>
   <div className="greeting">
     <div className="welcome">Welcome</div>
     <i className="fa fa-user" />
@@ -15,7 +16,7 @@ export default ({
   <div className="subject-nav">
     <div
       className="subject-nav-item"
-      onClick={ () => openModal(`newSubject`) }
+      onClick={ () => openModal(`NewSubject`) }
     >
       <a className="new-subject">New Subject</a>
       <i className="fa fa-plus" />
@@ -23,7 +24,7 @@ export default ({
     { subjects.map(s =>
     <div
       className={ `subject-nav-item ${s.active ? `active` : ``}` }
-      onClick={ () => setSubject(s.title) }
+      onClick={ () => setSubject({ title: s.title }) }
     >
       <a className="new-subject">{ s.title }</a>
       <i className="fa fa-file" />

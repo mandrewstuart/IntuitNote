@@ -118,18 +118,30 @@ export default class App extends Component {
     })
   };
 
-  setSubject = title => {
+  setSubject = ({ title }) => {
     /*
      *  TODO: fetch subject from server
      */
 
     this.setState({
-      subjects: this.state.subjects.map(s => ({ ...s, active: s.title === title })),
+      subjects:
+        this.state.subjects.map(s => ({ ...s, active: s.title === title })),
+    })
+  }
+
+  deleteSubject = ({ title }) => {
+    /*
+     *  TODO: call delete endpoint
+     */
+
+    this.setState({
+      subjects: this.state.subjects.filter(s => s.title !== title ),
+      modalOpen: false,
     })
   }
 
   render() {
-    let { ModalComponent } = this.state
+    let { ModalComponent, subjects } = this.state
 
     let children = Children.map(this.props.children, child => {
       return cloneElement(child, {
@@ -141,6 +153,7 @@ export default class App extends Component {
         openModal: this.openModal,
         closeModal: this.closeModal,
         setSubject: this.setSubject,
+        deleteSubject: this.deleteSubject,
         socket,
       })
     })
@@ -159,6 +172,8 @@ export default class App extends Component {
 
             // conditionally add these
             createSubject={ this.createSubject }
+            deleteSubject={ this.deleteSubject }
+            subjects={ subjects }
           />
         </Dialog>
 
