@@ -4,13 +4,14 @@ import io from 'socket.io-client'
 
 /*----------------------------------------------------------------------------*/
 
-import auth from '../auth'
 import { domain } from 'config'
+import auth from '../auth'
+import isAValidEmail from 'utils/isEmail'
 
 /*----------------------------------------------------------------------------*/
 
 import Modals from 'components/Modals'
-import Dialog from 'material-ui/lib/dialog';
+import Dialog from 'material-ui/lib/dialog'
 
 /*----------------------------------------------------------------------------*/
 
@@ -29,7 +30,10 @@ export default class App extends Component {
     }
   }
 
-  login = (type, { email, password }) =>
+  login = (type, { email, password }) => {
+    if (!isAValidEmail(email))
+      return this.setState({ message: `Invalid email` })
+
     auth[type]({ email, password }, response => {
       if (response.success) {
         this.setState({
@@ -42,7 +46,8 @@ export default class App extends Component {
       }
 
       else this.setState({ message: response.message })
-    });
+    })
+  };
 
   logout = () => {
     localStorage.clear()
@@ -50,7 +55,7 @@ export default class App extends Component {
     this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
-  openModal = modal => 
+  openModal = modal =>
     this.setState({ modalOpen: true, ModalComponent: Modals[modal] });
 
   closeModal = () =>

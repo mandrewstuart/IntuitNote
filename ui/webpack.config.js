@@ -34,6 +34,7 @@ module.exports = {
        components: 'src/components',
        style: 'src/style',
        utils: 'src/utils',
+       iso: '../iso/js',
        config: path.join(__dirname, 'config', process.env.NODE_ENV),
      },
      extensions: ['', '.js', '.styl'],

@@ -12,6 +12,7 @@ export default ({
       <Link className="logo" to="/">Apprentice Data Extractor</Link>
 
       <div className="menu">
+        <a className="hvr-underline-from-right">About</a>
         <a className="hvr-underline-from-right">Pricing</a>
         { loggedIn ||
         <a className="hvr-underline-from-left" onClick={ () => openModal(`auth`) }>
