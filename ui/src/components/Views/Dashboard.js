@@ -33,11 +33,18 @@ export default ({
           </button>
         </div>
 
-        <div className="dropzone">
-          <Dropzone onDrop={ handleDrop }>
-            <div>Drag and drop files here</div>
-            <div>or click to select files</div>
-          </Dropzone>
+        <div className="subject-data">
+          <div className="paste-text-info">
+            <button>Enter text manually</button>
+          </div>
+          <div className="dropzone">
+            <Dropzone onDrop={ handleDrop }>
+              <div className="dnd-hint">
+                Drag and drop a file here to start extracting data
+              </div>
+              <div className="select-hint">or click to select files from your computer</div>
+            </Dropzone>
+          </div>
         </div>
       </div>
       )}
