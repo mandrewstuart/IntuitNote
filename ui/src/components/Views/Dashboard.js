@@ -8,6 +8,8 @@ export default ({
   subjects,
   openModal,
   handleDrop,
+  toggleSubjectEditing,
+  editingSubject,
   ...props,
 }) =>
 <div className="app dashboard">
@@ -15,6 +17,7 @@ export default ({
 
   <div className="main-area">
     <Topbar logout={ logout } />
+
     <div className="subject-area">
       { !subjects.length &&
       <div className="start-message">
@@ -24,7 +27,13 @@ export default ({
       { subjects.filter(s => s.active).map(s =>
       <div>
         <div className="title-row">
-          <div className="subject-title">{ s.title }</div>
+          <div className="subject-title">
+            { editingSubject
+              ? <input type="text" defaultValue={ s.title } />
+              : s.title
+            }
+            <i onClick={ toggleSubjectEditing } className="fa fa-edit" />
+          </div>
           <button
             className="delete-btn"
             onClick={ () => openModal(`Confirm`) }

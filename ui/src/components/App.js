@@ -37,6 +37,7 @@ export default class App extends Component {
 
       ModalComponent: Modals[`auth`],
       modalOpen: false,
+      editingSubject: false,
     }
   }
 
@@ -127,7 +128,7 @@ export default class App extends Component {
       subjects:
         this.state.subjects.map(s => ({ ...s, active: s.title === title })),
     })
-  }
+  };
 
   deleteSubject = ({ title }) => {
     /*
@@ -138,7 +139,10 @@ export default class App extends Component {
       subjects: this.state.subjects.filter(s => s.title !== title ),
       modalOpen: false,
     })
-  }
+  };
+
+  toggleSubjectEditing = () =>
+    this.setState({ editingSubject: !this.state.editingSubject });
 
   render() {
     let { ModalComponent, subjects } = this.state
@@ -154,6 +158,7 @@ export default class App extends Component {
         closeModal: this.closeModal,
         setSubject: this.setSubject,
         deleteSubject: this.deleteSubject,
+        toggleSubjectEditing: this.toggleSubjectEditing,
         socket,
       })
     })
