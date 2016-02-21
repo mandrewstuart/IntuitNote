@@ -1,5 +1,4 @@
 import React from 'react'
-import Dropzone from 'react-dropzone'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
@@ -37,25 +36,18 @@ export default ({
               className={ `fa fa-${editingSubject ? `check` : `edit`}` }
             />
           </div>
-          <button
-            className="delete-btn"
-            onClick={ () => openModal(`Confirm`) }
-          >
-            Delete Subject
-          </button>
-        </div>
-
-        <div className="subject-data">
-          <div className="paste-text-info">
-            <button>Enter text manually</button>
-          </div>
-          <div className="dropzone">
-            <Dropzone onDrop={ handleDrop }>
-              <div className="dnd-hint">
-                Drag and drop a file here to start extracting data
-              </div>
-              <div className="select-hint">or click to select files from your computer</div>
-            </Dropzone>
+          <div className="subject-toolbar">
+            <button
+              onClick={ () => openModal(`NewDocument`) }
+            >
+              Add Document
+            </button>
+            <button
+              className="delete-btn"
+              onClick={ () => openModal(`Confirm`) }
+            >
+              Delete Subject
+            </button>
           </div>
         </div>
       </div>

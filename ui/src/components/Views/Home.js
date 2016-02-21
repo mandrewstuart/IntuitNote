@@ -8,7 +8,7 @@ export default ({
   openModal,
 }) =>
   <div>
-    <div className="header z-depth-1">
+    <div className="header">
       <Link className="logo" to="/">Apprentice Data Extractor</Link>
 
       <div className="menu">

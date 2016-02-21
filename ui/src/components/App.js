@@ -144,6 +144,29 @@ export default class App extends Component {
   toggleSubjectEditing = () =>
     this.setState({ editingSubject: !this.state.editingSubject });
 
+  handleDrop = event => {
+    console.log(event)
+  }
+
+  addDocument = async ({ title, author, text, subjectId }) => {
+    let response = await fetch(`${domain}:8080/api/newDocument`, {
+      method: `POST`,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: localStorage.token,
+        userEmail: localStorage.userEmail,
+        title, author, text, subjectId,
+      }),
+    })
+
+    let data = await response.json()
+
+    this.setState({
+      message: ``,
+      modalOpen: false,
+    })
+  }
+
   render() {
     let { ModalComponent, subjects } = this.state
 
@@ -179,6 +202,7 @@ export default class App extends Component {
             createSubject={ this.createSubject }
             deleteSubject={ this.deleteSubject }
             subjects={ subjects }
+            handleDrop={ this.handleDrop }
           />
         </Dialog>
 
