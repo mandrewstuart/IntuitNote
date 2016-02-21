@@ -1,4 +1,4 @@
-import cussterify
+import custom_classify
 import vectorizer
 import pprint
 
@@ -11,4 +11,4 @@ A = vectorizer.vectorize(A)
 #pprint.pprint(A)
 X = A[:len(data)]
 Z = A[len(data):]
-pprint.pprint(cussterify.proxit(X, Z, label_set))
+pprint.pprint(custom_classify.proxit(X, Z, label_set))
