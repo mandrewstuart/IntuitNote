@@ -35,7 +35,7 @@ export default class App extends Component {
        *  UI State
        */
 
-      ModalComponent: Modals[`auth`],
+      ModalComponent: Modals[`AuthModal`],
       modalOpen: false,
       editingSubject: false,
     }
@@ -102,6 +102,8 @@ export default class App extends Component {
     })
 
     let data = await response.json()
+
+    console.log(data)
 
     this.setState({
       subjects: [

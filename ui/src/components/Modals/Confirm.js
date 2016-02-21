@@ -7,7 +7,7 @@ export default ({
   subjects,
 }) =>
   <div className="confirm modal-content">
-    <div className="modal-title">Delete Subject </div>
+    <div className="modal-title">Delete Subject</div>
     <div className="new-subject form">
       <div className="button-row">
         <button className="delete" onClick={ () =>
