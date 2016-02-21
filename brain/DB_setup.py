@@ -1,28 +1,30 @@
-import postgresql
-db = postgresql.open('pq://access_user:test@localhost:5432/mydb')
-
+import sqlite3
+conn = sqlite3.connect('db.file')
+db = conn.cursor()
 
 db.execute("""CREATE TABLE subjects (
-subj_ID SERIAL primary key,
-subj_name varchar(255)
+subj_ID integer primary key,
+subj_name text
 );""")
 
 db.execute("""CREATE TABLE documents (
-doc_ID SERIAL primary key,
+doc_ID integer primary key,
 doc_subj_ID integer,
-doc_name varchar(1023)
+doc_name text
 );""")
 
 db.execute("""CREATE TABLE sentences(
-sent_ID SERIAL primary key,
+sent_ID integer primary key,
 sent_doc_ID integer,
 sent_taggable integer,
-sent_value varchar(2047)
+sent_value text
 );""")
 
 db.execute("""CREATE TABLE tags (
-tag_ID SERIAL primary key,
+tag_ID integer primary key,
 tag_sent_ID integer,
-tag_value varchar(511),
-confirmed integer
+tag_value text
 );""")
+
+conn.commit()
+conn.close()
