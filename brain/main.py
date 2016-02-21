@@ -8,15 +8,15 @@ def returnDBobj():
 ##########################################
 #subject pages
 ##########################################
-@post('/subject/create')
+@post('/createSubject')
 def subject_create():
-    response.content_type = 'application/json'
-    nom = request.forms.get('nom')
+    nom = request.json['nom']
     db = returnDBobj()
     db[0].execute("INSERT INTO subjects (subj_name) VALUES ('" + nom + "')")
     new_id = db[0].execute("SELECT subj_ID FROM subjects WHERE subj_name = '" + nom + "';")[0][0]
     db[1].commit()
     db[1].close()
+    response.content_type = 'application/json'
     return {"ID": new_id}
 
 
@@ -146,12 +146,12 @@ def tag():
 @route('/tags/review/<subj_ID>')
 def review(subj_ID):
     db = returnDBobj()
-    data = db[0].execute("""SELECT 
+    data = db[0].execute("""SELECT
                 d.doc_name
                 , se.sent_value
                 , t.tag_value
                 , t.tag_ID
-                FROM  documents d 
+                FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = """ + str(subj_ID) + " ORDER BY se.sent_ID ASC")
@@ -164,12 +164,12 @@ def review(subj_ID):
 def auto_tag(doc_ID):
     #check if there are any tags in that subject yet
     db = returnDBobj()
-    tag_count = db[0].execute("""SELECT 
+    tag_count = db[0].execute("""SELECT
                 COUNT(*)
-                FROM  documents d 
+                FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
-                WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents 
+                WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
                                     WHERE doc_ID = """ + str(doc_ID) + ") AND doc_ID <> " + str(doc_ID))[0][0]
     #inform the user if they still need to tag something already
     if (tag_count == 0):
@@ -179,9 +179,9 @@ def auto_tag(doc_ID):
         data = db[0].execute("""SELECT sent_value, tag_value
                         FROM sentences s
                         LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID
-                        WHERE sent_doc_ID in (SELECT DISTINCT doc_ID 
-                        FROM documents 
-                        WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents 
+                        WHERE sent_doc_ID in (SELECT DISTINCT doc_ID
+                        FROM documents
+                        WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
                                             WHERE doc_ID = """ + str(doc_ID) + """)
                         AND doc_ID <> """ + str(doc_ID) + ") ORDER BY sent_ID")
         output = []

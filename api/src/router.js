@@ -13,17 +13,33 @@ export default ({ app, io }) => {
   api.post(`/newSubject`, (req, res) => {
     let { userEmail, title } = req.body
 
-    fetch(`${brain}/subject/create`, {
-
-    }).then(res => {
-      if (res.status >= 400) {
-        throw new Error(`Bad response from server`)
-      }
-      return res.json()
-    }).then(data => {
-      res.json({ subjectId: `blah` })
+    fetch(`${brain}/createSubject`, {
+      method: `POST`,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nom: title
+      }),
     })
-    .catch(error => res.json({ error }))
+      .then(res => {
+        if (res.status >= 400)
+          throw new Error(`Bad response from server`)
+
+        return res.json()
+      })
+      .then(data => {
+
+        /*
+         *  TODO: save subjectId to User object.
+         */
+
+         User.findOne({ userEmail }).then(user => {
+           user.subjects = [
+             ...user.subjects
+           ]
+           res.json({ subjectId: `blah` })
+         })
+      })
+      .catch(error => res.json({ error: error.message }))
   })
 
   return api

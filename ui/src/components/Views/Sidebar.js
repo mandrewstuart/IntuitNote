@@ -23,6 +23,7 @@ export default ({
     </div>
     { subjects.map(s =>
     <div
+      key={ s.title }
       className={ `subject-nav-item ${s.active ? `active` : ``}` }
       onClick={ () => setSubject({ title: s.title }) }
     >
