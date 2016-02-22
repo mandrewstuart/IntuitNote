@@ -25,11 +25,11 @@ export default ({
       }
       { subjects.filter(s => s.active).map(s =>
       <div>
-        <div className="title-row">
-          <div className="subject-title">
+        <div className="name-row">
+          <div className="subject-name">
             { editingSubject
-              ? <input autoFocus type="text" defaultValue={ s.title } />
-              : s.title
+              ? <input autoFocus type="text" defaultValue={ s.name } />
+              : s.name
             }
             <i
               onClick={ toggleSubjectEditing }

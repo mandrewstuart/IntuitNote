@@ -88,8 +88,8 @@ export default class App extends Component {
    *  User Logic
    */
 
-  createSubject = async ({ title }) => {
-    if (!title) return this.setState({ message: `Please name your subject!` })
+  createSubject = async ({ name }) => {
+    if (!name) return this.setState({ message: `Please name your subject!` })
 
     let response = await fetch(`${domain}:8080/api/newSubject`, {
       method: `POST`,
@@ -97,7 +97,7 @@ export default class App extends Component {
       body: JSON.stringify({
         token: localStorage.token,
         userEmail: localStorage.userEmail,
-        title,
+        name,
       }),
     })
 
@@ -109,7 +109,7 @@ export default class App extends Component {
       subjects: [
         ...this.state.subjects.map(s => ({ ...s, active: false })),
         {
-          title,
+          name,
           active: true,
           createdDate: +new Date(),
           updatedDate: +new Date(),
@@ -121,24 +121,24 @@ export default class App extends Component {
     })
   };
 
-  setSubject = ({ title }) => {
+  setSubject = ({ name }) => {
     /*
      *  TODO: fetch subject from server
      */
 
     this.setState({
       subjects:
-        this.state.subjects.map(s => ({ ...s, active: s.title === title })),
+        this.state.subjects.map(s => ({ ...s, active: s.name === name })),
     })
   };
 
-  deleteSubject = ({ title }) => {
+  deleteSubject = ({ name }) => {
     /*
      *  TODO: call delete endpoint
      */
 
     this.setState({
-      subjects: this.state.subjects.filter(s => s.title !== title ),
+      subjects: this.state.subjects.filter(s => s.name !== name ),
       modalOpen: false,
     })
   };
@@ -150,14 +150,14 @@ export default class App extends Component {
     console.log(event)
   }
 
-  addDocument = async ({ title, author, text, subjectId }) => {
+  addDocument = async ({ name, author, text, subjectId }) => {
     let response = await fetch(`${domain}:8080/api/newDocument`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         token: localStorage.token,
         userEmail: localStorage.userEmail,
-        title, author, text, subjectId,
+        name, author, text, subjectId,
       }),
     })
 

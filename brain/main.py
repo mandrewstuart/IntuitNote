@@ -10,10 +10,10 @@ def returnDBobj():
 ##########################################
 @post('/createSubject')
 def subject_create():
-    nom = request.json['nom']
+    name = request.json['name']
     db = returnDBobj()
-    db[0].execute("INSERT INTO subjects (subj_name) VALUES ('" + nom + "')")
-    new_id = db[0].execute("SELECT subj_ID FROM subjects WHERE subj_name = '" + nom + "';")[0][0]
+    db[0].execute("INSERT INTO subjects (subj_name) VALUES ('" + name + "')")
+    new_id = db[0].execute("SELECT subj_ID FROM subjects WHERE subj_name = '" + name + "';")[0][0]
     db[1].commit()
     db[1].close()
     response.content_type = 'application/json'
@@ -22,7 +22,6 @@ def subject_create():
 
 @route('/subjects')
 def subjects_read():
-    response.content_type = 'application/json'
     db = returnDBobj()
     data = db[0].execute('SELECT * FROM subjects;')
     all_data = []
@@ -32,24 +31,24 @@ def subjects_read():
         subject['id'] = item[0]
         all_data.append(subject)
     db[1].close()
+    response.content_type = 'application/json'
     return {"subjects": all_data}
 
 
-@post('/subject/update')
+@post('/updateSubject')
 def subject_update():
-    response.content_type = 'application/json'
-    nom = request.forms.get('nom')
+    name = request.json['name']
     subj_id = int(request.forms.get('subj_id'))
     db = returnDBobj()
-    db[0].execute("UPDATE subjects SET subj_name = '" + nom + "' WHERE subj_ID = " + str(subj_ID) + ";")
+    db[0].execute("UPDATE subjects SET subj_name = '" + name + "' WHERE subj_ID = " + str(subj_ID) + ";")
     db[1].commit()
     db[1].close()
+    response.content_type = 'application/json'
     return {"updated": True}
 
 
 @route('/subject/delete/<id>')
 def subject_delete(id):
-    response.content_type = 'application/json'
     db = returnDBobj()
     db[0].execute('DELETE FROM subjects WHERE subj_ID = ' + str(id))
     db[0].execute('DELETE FROM tags WHERE tag_sent_ID IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = ' + str(id) + '))')
@@ -57,6 +56,7 @@ def subject_delete(id):
     db[0].execute('DELETE FROM documents WHERE doc_subj_ID = ' + str(id))
     db[1].commit()
     db[1].close()
+    response.content_type = 'application/json'
     return {"deleted": True}
 
 

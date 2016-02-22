@@ -11,14 +11,12 @@ export default ({ app, io }) => {
   auth({ app, api })
 
   api.post(`/newSubject`, (req, res) => {
-    let { userEmail, title } = req.body
+    let { userEmail, name } = req.body
 
     fetch(`${brain}/createSubject`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nom: title
-      }),
+      body: JSON.stringify({ name }),
     })
       .then(res => {
         if (res.status >= 400)
