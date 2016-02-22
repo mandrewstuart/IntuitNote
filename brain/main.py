@@ -213,4 +213,4 @@ def auto_tag(doc_ID):
     return template('auto_tag_review', rows = suggested)
 
 
-run(host="localhost", port=5000)
+run(host="localhost", port=5000, reloader=True)
