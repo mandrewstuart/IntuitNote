@@ -5,7 +5,7 @@ import React, { Component, Children, cloneElement, PropTypes } from 'react'
 import { domain } from 'config'
 import auth from '../auth'
 import isAValidEmail from 'utils/isEmail'
-import post from 'utils/post'
+import api from 'utils/api'
 
 /*----------------------------------------------------------------------------*/
 
@@ -43,6 +43,19 @@ export default class App extends Component {
   }
 
   /*
+   *  Startup
+   */
+
+  componentDidMount = () => {
+    this.getSubjects()
+  }
+
+  getSubjects = async () => {
+    let { subjects } = await api({ endpoint: `getSubjects` })
+    this.setState({ subjects })
+  }
+
+  /*
    *  UI State Logic
    */
 
@@ -63,9 +76,12 @@ export default class App extends Component {
     auth[type]({ email, password }, response => {
       if (response.success) {
 
+        console.log(response.user)
+
         this.setState({
           loggedIn: response.success,
           user: response.user,
+          subjects: [ ...response.user.subjects ],
           modalOpen: false,
           message: ``,
         })
@@ -90,13 +106,9 @@ export default class App extends Component {
   createSubject = async ({ name }) => {
     if (!name) return this.setState({ message: `Please name your subject!` })
 
-    let { id } = await post({
+    let { id } = await api({
       endpoint: `createSubject`,
-      body: {
-        token: localStorage.token,
-        userEmail: localStorage.userEmail,
-        name,
-      }
+      body: { name }
     })
 
     console.log(`Subject created! ID: `, id)
@@ -119,13 +131,9 @@ export default class App extends Component {
   };
 
   setSubject = async ({ id }) => {
-    let data = await post({
+    let data = await api({
       endpoint: `getSubject`,
-      body: {
-        token: localStorage.token,
-        userEmail: localStorage.userEmail,
-        id,
-      }
+      body: { id }
     })
 
     console.log('Retrieved subject:', data)
@@ -155,17 +163,10 @@ export default class App extends Component {
   }
 
   addDocument = async ({ name, author, text, subjectId }) => {
-    let response = await fetch(`${domain}:8080/api/newDocument`, {
-      method: `POST`,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token: localStorage.token,
-        userEmail: localStorage.userEmail,
-        name, author, text, subjectId,
-      }),
+    let data = await api({
+      endpoint: `newDocument`,
+      body: { name, author, text, subjectId },
     })
-
-    let data = await response.json()
 
     this.setState({
       message: ``,

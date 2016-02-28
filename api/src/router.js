@@ -11,6 +11,14 @@ export default ({ app, io }) => {
 
   auth({ app, api })
 
+  api.post(`/getSubjects`, (req, res) => {
+    let { userEmail } = req.body
+    User.findOne({ email: userEmail }, (err, user) => {
+      if (err) throw err
+      res.json({ subjects: user.subjects })
+    })
+  })
+
   api.post(`/createSubject`, (req, res) => {
     let { userEmail, name } = req.body
 
