@@ -8,23 +8,22 @@ def returnDBobj():
 ##########################################
 #subject pages
 ##########################################
-@post('/subject/create')
+@post('/createSubject')
 def subject_create():
-    response.content_type = 'application/json'
-    nom = request.forms.get('nom')
+    name = request.json['name']
     db = returnDBobj()
-    db[0].execute("INSERT INTO subjects (subj_name) VALUES ('" + nom + "')")
-    new_id = db[0].execute("SELECT subj_ID FROM subjects WHERE subj_name = '" + nom + "';")[0][0]
+    db[0].execute("INSERT INTO subjects (subj_name) VALUES ('" + name + "')")
+    new_id = db[0].execute("SELECT subj_ID FROM subjects WHERE subj_name = '" + name + "';").fetchall().[0][0]
     db[1].commit()
     db[1].close()
+    response.content_type = 'application/json'
     return {"ID": new_id}
 
 
 @route('/subjects')
 def subjects_read():
-    response.content_type = 'application/json'
     db = returnDBobj()
-    data = db[0].execute('SELECT * FROM subjects;')
+    data = db[0].execute('SELECT * FROM subjects;').fetchall()
     all_data = []
     for item in data:
         subject = {}
@@ -32,24 +31,24 @@ def subjects_read():
         subject['id'] = item[0]
         all_data.append(subject)
     db[1].close()
+    response.content_type = 'application/json'
     return {"subjects": all_data}
 
 
-@post('/subject/update')
+@post('/updateSubject')
 def subject_update():
-    response.content_type = 'application/json'
-    nom = request.forms.get('nom')
+    name = request.json['name']
     subj_id = int(request.forms.get('subj_id'))
     db = returnDBobj()
-    db[0].execute("UPDATE subjects SET subj_name = '" + nom + "' WHERE subj_ID = " + str(subj_ID) + ";")
+    db[0].execute("UPDATE subjects SET subj_name = '" + name + "' WHERE subj_ID = " + str(subj_ID) + ";")
     db[1].commit()
     db[1].close()
+    response.content_type = 'application/json'
     return {"updated": True}
 
 
 @route('/subject/delete/<id>')
 def subject_delete(id):
-    response.content_type = 'application/json'
     db = returnDBobj()
     db[0].execute('DELETE FROM subjects WHERE subj_ID = ' + str(id))
     db[0].execute('DELETE FROM tags WHERE tag_sent_ID IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = ' + str(id) + '))')
@@ -57,7 +56,12 @@ def subject_delete(id):
     db[0].execute('DELETE FROM documents WHERE doc_subj_ID = ' + str(id))
     db[1].commit()
     db[1].close()
+<<<<<<< HEAD
     return {"eleted": True}
+=======
+    response.content_type = 'application/json'
+    return {"deleted": True}
+>>>>>>> 4b90e940c0114dfb872b4d1e1449a9e642347720
 
 
 ##########################################
@@ -72,10 +76,10 @@ def create_document():
     sujet = request.forms.get('sujet')
     db = returnDBobj()
     db[0].execute("INSERT INTO documents (doc_name, doc_subj_ID) VALUES ('" + nom + "', " + str(sujet) + ")")
-    doc_ID = db[0].execute("SELECT doc_ID FROM documents WHERE doc_name = '" + nom + "' AND doc_subj_ID = " + str(sujet) + ";")[0][0]
+    doc_ID = db[0].execute("SELECT doc_ID FROM documents WHERE doc_name = '" + nom + "' AND doc_subj_ID = " + str(sujet) + ";").fetchall().[0][0]
     doc_ID = int(doc_ID)
     divise = parse_doc(contenu)
-    c = db[0].execute('SELECT MAX(sent_ID) FROM sentences;')[0][0]
+    c = db[0].execute('SELECT MAX(sent_ID) FROM sentences;').fetchall().[0][0]
     try:
         c = int(c)
     except:
@@ -91,8 +95,8 @@ def create_document():
 @route('/subject/<id>')
 def show_subject(id):
     db = returnDBobj()
-    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(id))[0][0]
-    docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(id))
+    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(id)).fetchall().[0][0]
+    docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(id)).fetchall().
     db[1].close()
     return template('subject_read', nom = nom, rows = docs, id = id)
 
@@ -114,12 +118,12 @@ def delete_document(id):
 def show_document(id):
     db = returnDBobj()
     sentences = db[0].execute("""SELECT s.sent_value, s.sent_ID, COALESCE(t.tag_value, 'qwertpop'), s.sent_taggable
-        FROM sentences s LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID WHERE sent_doc_ID = """ + str(id) + " ORDER BY s.sent_ID")
+        FROM sentences s LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID WHERE sent_doc_ID = """ + str(id) + " ORDER BY s.sent_ID").fetchall().
     sents = []
     for x in sentences:
         sents.append([html.unescape(x[0]), x[1], x[2], x[3]])
-    nom = db[0].execute("SELECT doc_name FROM documents WHERE doc_ID = " + str(id))[0][0]
-    subj_ID = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(id))[0][0]
+    nom = db[0].execute("SELECT doc_name FROM documents WHERE doc_ID = " + str(id)).fetchall().[0][0]
+    subj_ID = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(id)).fetchall().[0][0]
     db[1].close()
     return template('document_read', rows = sents, nom = nom, sujet = subj_ID)
 
@@ -146,16 +150,16 @@ def tag():
 @route('/tags/review/<subj_ID>')
 def review(subj_ID):
     db = returnDBobj()
-    data = db[0].execute("""SELECT 
+    data = db[0].execute("""SELECT
                 d.doc_name
                 , se.sent_value
                 , t.tag_value
                 , t.tag_ID
-                FROM  documents d 
+                FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
-                WHERE doc_subj_ID = """ + str(subj_ID) + " ORDER BY se.sent_ID ASC")
-    sujet = db[0].execute("SELECT subj_name FROM subjects WHERE subj_ID = " + str(subj_ID))[0][0]
+                WHERE doc_subj_ID = """ + str(subj_ID) + " ORDER BY se.sent_ID ASC").fetchall()
+    sujet = db[0].execute("SELECT subj_name FROM subjects WHERE subj_ID = " + str(subj_ID)).fetchall().[0][0]
     db[1].close()
     return template('tags_review', nom = sujet, rows = data)
 
@@ -164,13 +168,13 @@ def review(subj_ID):
 def auto_tag(doc_ID):
     #check if there are any tags in that subject yet
     db = returnDBobj()
-    tag_count = db[0].execute("""SELECT 
+    tag_count = db[0].execute("""SELECT
                 COUNT(*)
-                FROM  documents d 
+                FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
-                WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents 
-                                    WHERE doc_ID = """ + str(doc_ID) + ") AND doc_ID <> " + str(doc_ID))[0][0]
+                WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
+                                    WHERE doc_ID = """ + str(doc_ID) + ") AND doc_ID <> " + str(doc_ID)).fetchall().[0][0]
     #inform the user if they still need to tag something already
     if (tag_count == 0):
         return "You haven't tagged anything for this subject yet. <a href='/'>main</a>"
@@ -179,16 +183,16 @@ def auto_tag(doc_ID):
         data = db[0].execute("""SELECT sent_value, tag_value
                         FROM sentences s
                         LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID
-                        WHERE sent_doc_ID in (SELECT DISTINCT doc_ID 
-                        FROM documents 
-                        WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents 
+                        WHERE sent_doc_ID in (SELECT DISTINCT doc_ID
+                        FROM documents
+                        WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
                                             WHERE doc_ID = """ + str(doc_ID) + """)
-                        AND doc_ID <> """ + str(doc_ID) + ") ORDER BY sent_ID")
+                        AND doc_ID <> """ + str(doc_ID) + ") ORDER BY sent_ID").fetchall()
         output = []
         for x in data:
             output.append([html.unescape(x[0])])
         #machine learning
-        target = db[0].execute('SELECT sent_value, sent_ID FROM sentences WHERE length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_ID) + ' ORDER BY sent_ID')
+        target = db[0].execute('SELECT sent_value, sent_ID FROM sentences WHERE length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_ID) + ' ORDER BY sent_ID').fetchall()
         clean_target = []
         for x in target:
             clean_target.append([html.unescape(x[0])])
@@ -213,4 +217,4 @@ def auto_tag(doc_ID):
     return template('auto_tag_review', rows = suggested)
 
 
-run(host="localhost", port=5000)
+run(host="localhost", port=5000, reloader=True)

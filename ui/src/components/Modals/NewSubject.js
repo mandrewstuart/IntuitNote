@@ -1,6 +1,6 @@
 import React from 'react'
 
-let title
+let name
 
 export default ({
   closeModal,
@@ -11,9 +11,9 @@ export default ({
     <div className="close-btn" onClick={ closeModal }>CLOSE ✕</div>
     <div className="modal-title">Create New Subject</div>
     <div className="new-subject form">
-      <input ref={ node => title = node } placeholder="Title.." />
+      <input ref={ node => name = node } placeholder="Name.." />
       <div className="button-row">
-        <button onClick={ () => createSubject({ title: title.value }) }>
+        <button onClick={ () => createSubject({ name: name.value }) }>
           + Create
         </button>
       </div>
