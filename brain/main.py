@@ -17,7 +17,7 @@ def subject_create():
     db[1].commit()
     db[1].close()
     response.content_type = 'application/json'
-    return {"ID": new_id}
+    return {"id": new_id}
 
 
 @route('/subjects')
@@ -38,9 +38,9 @@ def subjects_read():
 @post('/updateSubject')
 def subject_update():
     name = request.json['name']
-    subj_id = int(request.json.get('subj_id'))
+    subj_id = int(request.json['subj_id'])
     db = returnDBobj()
-    db[0].execute("UPDATE subjects SET subj_name = '" + name + "' WHERE subj_ID = " + str(subj_ID) + ";")
+    db[0].execute("UPDATE subjects SET subj_name = '" + name + "' WHERE subj_ID = " + str(subj_id) + ";")
     db[1].commit()
     db[1].close()
     response.content_type = 'application/json'
