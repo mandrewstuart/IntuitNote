@@ -10,7 +10,9 @@ subj_name text
 db.execute("""CREATE TABLE documents (
 doc_ID integer primary key,
 doc_subj_ID integer,
-doc_name text
+doc_name text,
+doc_author text,
+doc_publication text
 );""")
 
 db.execute("""CREATE TABLE sentences(

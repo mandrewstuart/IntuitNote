@@ -68,6 +68,8 @@ def create_document():
     nom = request.json.get('nom')
     contenu = request.json.get('contenu')
     contenu = html.escape(contenu)
+    auteur = request.json.get('auteur')
+    auteur = html.escape(auteur)
     sujet = request.json.get('sujet')
     db = returnDBobj()
     db[0].execute("INSERT INTO documents (doc_name, doc_subj_ID) VALUES ('" + nom + "', " + str(sujet) + ")")
