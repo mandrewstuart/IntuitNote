@@ -47,7 +47,7 @@ def subject_update():
     return {"updated": True}
 
 
-@route('/deleteSubject/<id>')
+@post('/deleteSubject/<id>')
 def subject_delete(id):
     db = returnDBobj()
     db[0].execute('DELETE FROM subjects WHERE subj_ID = ' + str(id))
@@ -62,7 +62,7 @@ def subject_delete(id):
 ##########################################
 #doc pages
 ##########################################
-@post('/document/create')
+@post('/createDocument')
 def create_document():
     response.content_type = 'application/json'
     nom = request.json.get('nom')
@@ -90,13 +90,20 @@ def create_document():
 @route('/subject/<id>')
 def show_subject(id):
     db = returnDBobj()
-    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(id)).fetchall()[0][0]
+    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(id)).fetchall()
     docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(id)).fetchall()
+    all_data = []
+    for item in docs:
+        document = {}
+        document['name'] = item[0]
+        document['id'] = item[1]
+        all_data.append(document)
     db[1].close()
-    return template('subject_read', nom = nom, rows = docs, id = id)
+    response.content_type = 'application/json'
+    return {"documents": all_data}
 
 
-@route('/document/delete/<id>')
+@post('/deleteDocument/<id>')
 def delete_document(id):
     response.content_type = 'application/json'
     db = returnDBobj()
@@ -126,7 +133,7 @@ def show_document(id):
 ##########################################
 #Tags
 ##########################################
-@post('/tag/create')
+@post('/createTag')
 def tag():
     phrase = request.json.get('phrase_id')
     marque = request.json.get('marque')
@@ -142,7 +149,7 @@ def tag():
     return str(ok)
 
 
-@route('/tags/review/<subj_ID>')
+@route('/reviewTags/<subj_ID>')
 def review(subj_ID):
     db = returnDBobj()
     data = db[0].execute("""SELECT
