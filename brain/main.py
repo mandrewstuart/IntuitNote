@@ -57,7 +57,7 @@ def subject_delete(id):
     db[0].execute('DELETE FROM documents WHERE doc_subj_ID = ' + str(id))
     db[1].commit()
     db[1].close()
-    return {"deleted": True}
+    return {"eleted": True}
 
 
 ##########################################
