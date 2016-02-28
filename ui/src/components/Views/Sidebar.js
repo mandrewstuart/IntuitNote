@@ -23,9 +23,9 @@ export default ({
     </div>
     { subjects.map(s =>
     <div
-      key={ s.name }
+      key={ s.id }
       className={ `subject-nav-item ${s.active ? `active` : ``}` }
-      onClick={ () => setSubject({ name: s.name }) }
+      onClick={ () => setSubject({ id: s.id }) }
     >
       <a className="new-subject">{ s.name }</a>
       <i className="fa fa-file" />

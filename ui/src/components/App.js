@@ -5,6 +5,7 @@ import React, { Component, Children, cloneElement, PropTypes } from 'react'
 import { domain } from 'config'
 import auth from '../auth'
 import isAValidEmail from 'utils/isEmail'
+import post from 'utils/post'
 
 /*----------------------------------------------------------------------------*/
 
@@ -62,8 +63,6 @@ export default class App extends Component {
     auth[type]({ email, password }, response => {
       if (response.success) {
 
-        // TODO: load subjects
-
         this.setState({
           loggedIn: response.success,
           user: response.user,
@@ -91,25 +90,23 @@ export default class App extends Component {
   createSubject = async ({ name }) => {
     if (!name) return this.setState({ message: `Please name your subject!` })
 
-    let response = await fetch(`${domain}:8080/api/newSubject`, {
-      method: `POST`,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    let { id } = await post({
+      endpoint: `createSubject`,
+      body: {
         token: localStorage.token,
         userEmail: localStorage.userEmail,
         name,
-      }),
+      }
     })
 
-    let data = await response.json()
-
-    console.log(data)
+    console.log(`Subject created! ID: `, id)
 
     this.setState({
       subjects: [
         ...this.state.subjects.map(s => ({ ...s, active: false })),
         {
           name,
+          id,
           active: true,
           createdDate: +new Date(),
           updatedDate: +new Date(),
@@ -121,14 +118,21 @@ export default class App extends Component {
     })
   };
 
-  setSubject = ({ name }) => {
-    /*
-     *  TODO: fetch subject from server
-     */
+  setSubject = async ({ id }) => {
+    let data = await post({
+      endpoint: `getSubject`,
+      body: {
+        token: localStorage.token,
+        userEmail: localStorage.userEmail,
+        id,
+      }
+    })
+
+    console.log('Retrieved subject:', data)
 
     this.setState({
       subjects:
-        this.state.subjects.map(s => ({ ...s, active: s.name === name })),
+        this.state.subjects.map(s => ({ ...s, active: s.id === id })),
     })
   };
 

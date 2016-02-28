@@ -24,7 +24,7 @@ export default ({
       </div>
       }
       { subjects.filter(s => s.active).map(s =>
-      <div>
+      <div key={ s.name }>
         <div className="name-row">
           <div className="subject-name">
             { editingSubject

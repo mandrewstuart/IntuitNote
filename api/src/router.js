@@ -1,6 +1,7 @@
 import express from 'express'
-import brain from '../config/domain'
 import fetch from 'isomorphic-fetch'
+import brain from '../config/domain'
+import User from './models/User'
 
 import { auth } from './auth'
 
@@ -10,7 +11,7 @@ export default ({ app, io }) => {
 
   auth({ app, api })
 
-  api.post(`/newSubject`, (req, res) => {
+  api.post(`/createSubject`, (req, res) => {
     let { userEmail, name } = req.body
 
     fetch(`${brain}/createSubject`, {
@@ -24,19 +25,36 @@ export default ({ app, io }) => {
 
         return res.json()
       })
-      .then(data => {
+      .then(({ id }) => {
+        User.findOne({ email: userEmail }, (err, user) => {
+          if (err) throw err
 
-        /*
-         *  TODO: save subjectId to User object.
-         */
+          user.subjects = [ ...user.subjects, { name, id } ]
 
-         User.findOne({ userEmail }).then(user => {
-           user.subjects = [
-             ...user.subjects
-           ]
-           res.json({ subjectId: `blah` })
-         })
+          user.save((err, user) => {
+            if (err) throw err
+            res.json({ id })
+          })
+        })
       })
+      .catch(error => res.json({ error: error.message }))
+  })
+
+  api.post(`/getSubject`, (req, res) => {
+    let { userEmail, id } = req.body
+
+    fetch(`${brain}/getSubject`, {
+      method: `POST`,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+      .then(res => {
+        if (res.status >= 400)
+          throw new Error(`Bad response from server`)
+
+        return res.json()
+      })
+      .then(({ documents }) => res.json({ documents }) )
       .catch(error => res.json({ error: error.message }))
   })
 

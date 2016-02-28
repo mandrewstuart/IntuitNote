@@ -57,8 +57,6 @@ export default ({
             expiresInMinutes: 1440, // expires in 24 hours
           })
 
-          // TODO: fetch user subjects and send to client
-
           res.json({
             success: true,
             message: 'Enjoy your token!',

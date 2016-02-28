@@ -6,5 +6,5 @@ export default mongoose.model(`User`, new Schema({
 	email: String,
 	password: String,
 	plan: String,
-	subjects: [String],
+	subjects: [{ id: String, name: String }],
 }))
