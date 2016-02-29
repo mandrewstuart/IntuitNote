@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { Router, Route } from 'react-router'
 import { browserHistory } from 'react-router'
 
@@ -6,12 +6,10 @@ import { browserHistory } from 'react-router'
 
 import App from 'components/App'
 import { Home, Dashboard } from 'components/Views'
-
 import auth from './auth'
 
-let requireAuth = (nextState, replace) =>
-    !auth.loggedIn() && replace('/')
-
+let requireAuth = (nextState, replace) => !auth.loggedIn() && replace('/')
+//
 export default
   <Router history={ browserHistory }>
     <Route component={ App }>

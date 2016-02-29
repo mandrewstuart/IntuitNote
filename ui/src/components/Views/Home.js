@@ -1,10 +1,10 @@
 import React from 'react'
+import { observer } from 'mobx-react'
 import { Link } from 'react-router'
 
-export default ({
+export default observer(({
+  $,
   logout,
-  loggedIn,
-  user,
   openModal,
 }) =>
   <div>
@@ -14,17 +14,18 @@ export default ({
       <div className="menu">
         <a className="hvr-underline-from-right">About</a>
         <a className="hvr-underline-from-right">Pricing</a>
-        { loggedIn ||
+        { $.loggedIn ||
         <a className="hvr-underline-from-left" onClick={ () => openModal(`AuthModal`) }>
           Login / Register
         </a>
         }
-        { loggedIn &&
+        { $.loggedIn &&
         <div>
-          <span>Welcome, { user.email }</span>
+          <span>Welcome, { $.user.email }</span>
           <a onClick={ logout }>Log out</a>
         </div>
         }
       </div>
     </div>
   </div>
+)

@@ -10,8 +10,8 @@ injectTapEventPlugin();
 
 import React from 'react'
 import { render } from 'react-dom'
-import routes from './routes'
+import Routes from './Routes'
 
 /*----------------------------------------------------------------------------*/
 
-render(routes, document.getElementById(`root`))
+render(Routes, document.getElementById(`root`))

@@ -1,4 +1,6 @@
 import React, { Component, Children, cloneElement, PropTypes } from 'react'
+import { observer } from 'mobx-react'
+import Store, { connect } from '../Store'
 
 /*----------------------------------------------------------------------------*/
 
@@ -17,53 +19,39 @@ import Dialog from 'material-ui/lib/dialog'
 import io from 'socket.io-client'
 let socket = io(`${domain}:8080`)
 
+@connect(Store)
+@observer
 export default class App extends Component {
   static contextTypes = { router: PropTypes.object };
-
-  constructor (props) {
-    super(props)
-    this.state = {
-
-      /*
-       *  User State
-       */
-
-      loggedIn: auth.loggedIn(),
-      user: { email: localStorage.userEmail },
-      subjects: [],
-
-      /*
-       *  UI State
-       */
-
-      ModalComponent: Modals[`AuthModal`],
-      modalOpen: false,
-      editingSubject: false,
-    }
-  }
 
   /*
    *  Startup
    */
 
   componentDidMount = () => {
-    this.getSubjects()
-  }
+    if (this.props.$.loggedIn) this.getSubjects()
+  };
 
   getSubjects = async () => {
     let { subjects } = await api({ endpoint: `getSubjects` })
-    this.setState({ subjects })
-  }
+    this.props.$.subjects = subjects
+
+    console.log('after getting subjects', this.props.$)
+  };
 
   /*
    *  UI State Logic
    */
 
-   openModal = modal =>
-     this.setState({ modalOpen: true, ModalComponent: Modals[modal] });
+   openModal = modal => {
+     this.props.$.modalOpen = true
+     this.props.$.ModalComponent = Modals[modal]
+   };
 
-   closeModal = () =>
-     this.setState({ modalOpen: false, message: `` });
+   closeModal = () => {
+     this.props.$.modalOpen = false
+     this.props.$.message = ``
+   };
 
   /*
    *  Auth Logic
@@ -71,32 +59,32 @@ export default class App extends Component {
 
   login = (type, { email, password }) => {
     if (!isAValidEmail(email))
-      return this.setState({ message: `Invalid email` })
+      return this.props.$.message = `Invalid email`
 
     auth[type]({ email, password }, response => {
       if (response.success) {
 
-        console.log(response.user)
+        this.props.$.loggedIn = response.success
+        this.props.$.user = response.user
+        this.props.$.subjects = [ ...response.user.subjects ]
+        this.props.$.modalOpen = false
+        this.props.$.message = ``
 
-        this.setState({
-          loggedIn: response.success,
-          user: response.user,
-          subjects: [ ...response.user.subjects ],
-          modalOpen: false,
-          message: ``,
-        })
+        console.log('after login', this.props.$)
 
         this.context.router.replace(`/dashboard`)
       }
 
-      else this.setState({ message: response.message })
+      else this.props.$.message = response.message
     })
   };
 
   logout = () => {
     localStorage.clear()
     this.context.router.replace(`/`)
-    this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
+    this.props.$.loggedIn = false
+
+    console.log('logout', this.props.$.loggedIn)
   };
 
   /*
@@ -113,21 +101,20 @@ export default class App extends Component {
 
     console.log(`Subject created! ID: `, id)
 
-    this.setState({
-      subjects: [
-        ...this.state.subjects.map(s => ({ ...s, active: false })),
-        {
-          name,
-          id,
-          active: true,
-          createdDate: +new Date(),
-          updatedDate: +new Date(),
-          docs: [],
-        },
-      ],
-      message: ``,
-      modalOpen: false,
-    })
+    this.props.$.subjects = [
+      ...this.props.$.subjects.map(s => ({ ...s, active: false })),
+      {
+        name,
+        id,
+        active: true,
+        createdDate: +new Date(),
+        updatedDate: +new Date(),
+        docs: [],
+      },
+    ]
+
+    this.props.$.message = ``
+    this.props.$.modalOpen = false
   };
 
   setSubject = async ({ id }) => {
@@ -138,10 +125,7 @@ export default class App extends Component {
 
     console.log('Retrieved subject:', data)
 
-    this.setState({
-      subjects:
-        this.state.subjects.map(s => ({ ...s, active: s.id === id })),
-    })
+    this.props.$.subjects = this.state.subjects.map(s => ({ ...s, active: s.id === id }))
   };
 
   deleteSubject = ({ name }) => {
@@ -149,18 +133,16 @@ export default class App extends Component {
      *  TODO: call delete endpoint
      */
 
-    this.setState({
-      subjects: this.state.subjects.filter(s => s.name !== name ),
-      modalOpen: false,
-    })
+    this.props.$.subjects = this.props.$.subjects.filter(s => s.name !== name)
+    this.props.$.modalOpen = false
   };
 
   toggleSubjectEditing = () =>
-    this.setState({ editingSubject: !this.state.editingSubject });
+    this.props.$.editingSubject = !this.props.$.editingSubject;
 
   handleDrop = event => {
     console.log(event)
-  }
+  };
 
   addDocument = async ({ name, author, text, subjectId }) => {
     let data = await api({
@@ -168,20 +150,22 @@ export default class App extends Component {
       body: { name, author, text, subjectId },
     })
 
-    this.setState({
-      message: ``,
-      modalOpen: false,
-    })
-  }
+    this.props.$.message = ``
+    this.props.$.modalOpen = false
+  };
 
   render() {
-    let { ModalComponent, subjects } = this.state
+    let {
+      ModalComponent,
+      modalOpen,
+      subjects,
+      message,
+    } = this.props.$
 
     let children = Children.map(this.props.children, child => {
       return cloneElement(child, {
         ...child.props,
         ...this.props,
-        ...this.state,
         login: this.login,
         logout: this.logout,
         openModal: this.openModal,
@@ -193,17 +177,19 @@ export default class App extends Component {
       })
     })
 
+    console.log('render', this.props.$.loggedIn)
+
     return (
       <div id="app">
         <Dialog
           className="auth-modal"
-          open={ this.state.modalOpen }
+          open={ modalOpen }
           onRequestClose={ this.handleClose }
         >
           <ModalComponent
             closeModal={ this.closeModal }
             login={ this.login }
-            message={ this.state.message }
+            message={ message }
 
             // conditionally add these
             createSubject={ this.createSubject }

@@ -1,17 +1,17 @@
 import React from 'react'
+import { observer } from 'mobx-react'
 
-export default ({
-  user,
+export default observer(({
+  $,
   openModal,
-  subjects,
   setSubject,
-}) =>
-<div className="sidebar">
+}) => { console.log($)
+return (<div className="sidebar">
   <div className="logo center">ADE</div>
   <div className="greeting">
     <div className="welcome">Welcome</div>
     <i className="fa fa-user" />
-    <span>{ user.email }</span>
+    <span>{ $.user.email }</span>
   </div>
   <div className="subject-nav">
     <div
@@ -21,7 +21,7 @@ export default ({
       <a className="new-subject">New Subject</a>
       <i className="fa fa-plus" />
     </div>
-    { subjects.map(s =>
+    { $.subjects.map(s =>
     <div
       key={ s.id }
       className={ `subject-nav-item ${s.active ? `active` : ``}` }
@@ -33,3 +33,4 @@ export default ({
     )}
   </div>
 </div>
+)})

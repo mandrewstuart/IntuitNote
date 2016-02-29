@@ -1,39 +1,38 @@
 import React from 'react'
+import { observer } from 'mobx-react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
-export default ({
+export default observer(({
+  $,
   logout,
-  subjects,
-  openModal,
   handleDrop,
   toggleSubjectEditing,
-  editingSubject,
   ...props,
 }) =>
 <div className="app dashboard">
-  <Sidebar openModal={ openModal } subjects={ subjects } { ...props } />
+  <Sidebar openModal={ $.openModal } subjects={ $.subjects } $={ $ } { ...props } />
 
   <div className="main-area">
     <Topbar logout={ logout } />
 
     <div className="subject-area">
-      { !subjects.length &&
+      { !$.subjects.length &&
       <div className="start-message">
-        <i className="fa fa-long-arrow-left"></i> Click here to start!
+        <i className="fa fa-long-arrow-left" /> Click here to start!
       </div>
       }
-      { subjects.filter(s => s.active).map(s =>
+      { $.subjects.filter(s => s.active).map(s =>
       <div key={ s.name }>
         <div className="name-row">
           <div className="subject-name">
-            { editingSubject
+            { $.editingSubject
               ? <input autoFocus type="text" defaultValue={ s.name } />
               : s.name
             }
             <i
               onClick={ toggleSubjectEditing }
-              className={ `fa fa-${editingSubject ? `check` : `edit`}` }
+              className={ `fa fa-${$.editingSubject ? `check` : `edit`}` }
             />
           </div>
           <div className="subject-toolbar">
@@ -55,3 +54,4 @@ export default ({
     </div>
   </div>
 </div>
+)
