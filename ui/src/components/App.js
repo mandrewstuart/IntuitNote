@@ -96,6 +96,9 @@ export default class App extends Component {
   logout = () => {
     localStorage.clear()
     this.context.router.replace(`/`)
+
+    // TODO : reset all the things!
+
     this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
   };
 
