@@ -130,7 +130,7 @@ export default class App extends Component {
     })
   };
 
-  setSubject = async ({ id }) => {
+  getSubject = async ({ id }) => {
     let data = await api({
       endpoint: `getSubject`,
       body: { id }
@@ -144,23 +144,34 @@ export default class App extends Component {
     })
   };
 
-  deleteSubject = ({ name }) => {
-    /*
-     *  TODO: call delete endpoint
-     */
+  deleteSubject = async ({ id }) => {
+    let data = await api({
+      endpoint: `deleteSubject`,
+      body: { id },
+    })
 
     this.setState({
-      subjects: this.state.subjects.filter(s => s.name !== name ),
+      subjects: this.state.subjects.filter(s => s.id !== id ),
       modalOpen: false,
     })
   };
 
-  toggleSubjectEditing = () =>
-    this.setState({ editingSubject: !this.state.editingSubject });
+  toggleSubjectEditing = async ({ id, name }) => {
+    if (this.state.editingSubject) {
+      let data = await api({
+        endpoint: `updateSubject`,
+        body: { id, name }
+      })
+      let { subjects } = this.state
+      subjects.find(x => x.id === id).name = name
+      this.setState({ subjects })
+    }
+    this.setState({ editingSubject: !this.state.editingSubject })
+  };
 
   handleDrop = event => {
     console.log(event)
-  }
+  };
 
   addDocument = async ({ name, author, text, subjectId }) => {
     let data = await api({
@@ -172,7 +183,7 @@ export default class App extends Component {
       message: ``,
       modalOpen: false,
     })
-  }
+  };
 
   render() {
     let { ModalComponent, subjects } = this.state
@@ -186,7 +197,7 @@ export default class App extends Component {
         logout: this.logout,
         openModal: this.openModal,
         closeModal: this.closeModal,
-        setSubject: this.setSubject,
+        getSubject: this.getSubject,
         deleteSubject: this.deleteSubject,
         toggleSubjectEditing: this.toggleSubjectEditing,
         socket,

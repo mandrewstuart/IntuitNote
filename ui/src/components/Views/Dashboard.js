@@ -2,6 +2,8 @@ import React from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 
+let name = { value: `` }
+
 export default ({
   logout,
   subjects,
@@ -28,11 +30,11 @@ export default ({
         <div className="name-row">
           <div className="subject-name">
             { editingSubject
-              ? <input autoFocus type="text" defaultValue={ s.name } />
+              ? <input ref={ node => name = node } autoFocus type="text" defaultValue={ s.name } />
               : s.name
             }
             <i
-              onClick={ toggleSubjectEditing }
+              onClick={ () => toggleSubjectEditing({ name: name.value, id: s.id }) }
               className={ `fa fa-${editingSubject ? `check` : `edit`}` }
             />
           </div>

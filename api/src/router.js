@@ -4,7 +4,9 @@ import { auth } from './auth'
 import {
   getSubjects,
   createSubject,
-  getSubject
+  getSubject,
+  deleteSubject,
+  updateSubject
 } from './routes'
 
 export default ({ app, io }) => {
@@ -15,6 +17,8 @@ export default ({ app, io }) => {
   getSubjects({ api })
   createSubject({ api })
   getSubject({ api })
+  deleteSubject({ api })
+  updateSubject({ api })
 
   return api
 }

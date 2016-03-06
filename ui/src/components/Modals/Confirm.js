@@ -11,7 +11,7 @@ export default ({
     <div className="new-subject form">
       <div className="button-row">
         <button className="delete" onClick={ () =>
-          deleteSubject({ title: subjects.find(s => s.active).title })
+          deleteSubject({ title: subjects.find(s => s.active).id })
         }>
           YES DELETE
         </button>

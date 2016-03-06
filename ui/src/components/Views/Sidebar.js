@@ -4,7 +4,7 @@ export default ({
   user,
   openModal,
   subjects,
-  setSubject,
+  getSubject,
 }) =>
 <div className="sidebar">
   <div className="logo center">ADE</div>
@@ -25,7 +25,7 @@ export default ({
     <div
       key={ s.id }
       className={ `subject-nav-item ${s.active ? `active` : ``}` }
-      onClick={ () => setSubject({ id: s.id }) }
+      onClick={ () => getSubject({ id: s.id }) }
     >
       <a className="new-subject">{ s.name }</a>
       <i className="fa fa-file" />
