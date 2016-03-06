@@ -1,13 +1,14 @@
 import React from 'react'
 import Dropzone from 'react-dropzone'
 
-let title, author, text
+let title, author, publication, date, text
 
 export default ({
   closeModal,
   message,
   handleDrop,
-  addDocument,
+  createDocument,
+  subjects
 }) =>
 <div className="modal-content new-document">
   <div className="close-btn" onClick={ closeModal }>CLOSE ✕</div>
@@ -20,8 +21,11 @@ export default ({
     <input ref={ node => title = node } type="text" placeholder="Title.." />
     <label>Title</label>
 
-    <input ref={ node => author = node } type="text" placeholder="Author.." />
+    <input ref={ node => author = node } type="text" placeholder="Author.. (optional)" />
     <label>Author</label>
+
+    <input ref={ node => publication = node } type="text" placeholder="Publication.. (optional)" />
+    <label>Publication</label>
 
     <div style={{ marginTop: `1rem` }}>
       <textarea
@@ -42,10 +46,12 @@ export default ({
     <div>
       <button
         onClick={
-          () => addDocument({
+          () => createDocument({
             title: title.value,
             author: author.value,
+            publication: publication.value,
             text: text.value,
+            id: subjects.find(s => s.active).id
           })
         }
       >

@@ -6,7 +6,8 @@ import {
   createSubject,
   getSubject,
   deleteSubject,
-  updateSubject
+  updateSubject,
+  createDocument
 } from './routes'
 
 export default ({ app, io }) => {
@@ -19,6 +20,7 @@ export default ({ app, io }) => {
   getSubject({ api })
   deleteSubject({ api })
   updateSubject({ api })
+  createDocument({ api })
 
   return api
 }

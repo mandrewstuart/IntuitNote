@@ -173,10 +173,10 @@ export default class App extends Component {
     console.log(event)
   };
 
-  addDocument = async ({ name, author, text, subjectId }) => {
+  createDocument = async ({ name, author, text, publication, id }) => {
     let data = await api({
-      endpoint: `newDocument`,
-      body: { name, author, text, subjectId },
+      endpoint: `createDocument`,
+      body: { name, author, text, publication, id },
     })
 
     this.setState({
@@ -219,6 +219,7 @@ export default class App extends Component {
             // conditionally add these
             createSubject={ this.createSubject }
             deleteSubject={ this.deleteSubject }
+            createDocument={ this.createDocument }
             subjects={ subjects }
             handleDrop={ this.handleDrop }
           />
