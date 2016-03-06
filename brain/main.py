@@ -20,7 +20,7 @@ def subject_create():
     return {"id": new_id}
 
 
-@route('/subjects')
+@route('/getSubjects')
 def subjects_read():
     db = returnDBobj()
     data = db[0].execute('SELECT * FROM subjects;').fetchall()
@@ -47,13 +47,14 @@ def subject_update():
     return {"updated": True}
 
 
-@post('/deleteSubject/<id>')
-def subject_delete(id):
+@post('/deleteSubject')
+def subject_delete():
+    delete_id = int(request.json['id'])
     db = returnDBobj()
-    db[0].execute('DELETE FROM subjects WHERE subj_ID = ' + str(id))
-    db[0].execute('DELETE FROM tags WHERE tag_sent_ID IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = ' + str(id) + '))')
-    db[0].execute('DELETE FROM sentences WHERE sent_doc_ID IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = ' + str(id) + ')')
-    db[0].execute('DELETE FROM documents WHERE doc_subj_ID = ' + str(id))
+    db[0].execute('DELETE FROM subjects WHERE subj_ID = ' + str(delete_id))
+    db[0].execute('DELETE FROM tags WHERE tag_sent_ID IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = ' + str(delete_id) + '))')
+    db[0].execute('DELETE FROM sentences WHERE sent_doc_ID IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = ' + str(delete_id) + ')')
+    db[0].execute('DELETE FROM documents WHERE doc_subj_ID = ' + str(delete_id))
     db[1].commit()
     db[1].close()
     return {"deleted": True}
@@ -89,11 +90,12 @@ def create_document():
     return {"document_ID": doc_ID}
 
 
-@route('/subject/<id>')
-def show_subject(id):
+@route('/getSubject')
+def show_subject():
+    sunj_id = request.json.get('sunj_id')
     db = returnDBobj()
-    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(id)).fetchall()
-    docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(id)).fetchall()
+    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(sunj_id)).fetchall()
+    docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(sunj_id)).fetchall()
     all_data = []
     for item in docs:
         document = {}
@@ -105,11 +107,13 @@ def show_subject(id):
     return {"documents": all_data}
 
 
-@post('/deleteDocument/<id>')
-def delete_document(id):
-    response.content_type = 'application/json'
+@post('/deleteDocument')
+def delete_document():
+    delete_id = int(request.json['id'])
     db = returnDBobj()
-    db[0].execute('DELETE FROM documents WHERE doc_ID = ' + str(id))
+    db[0].execute('DELETE FROM tags WHERE tag_sent_ID IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID  = ' + str(delete_id) + ')')
+    db[0].execute('DELETE FROM sentences WHERE sent_doc_ID =' + str(delete_id) + '')
+    db[0].execute('DELETE FROM documents WHERE doc_ID = ' + str(delete_id))
     db[1].commit()
     db[1].close()
     return {"deleted": True}
@@ -118,18 +122,32 @@ def delete_document(id):
 ##########################################
 #Sentences
 ##########################################
-@route('/document/<id>')
-def show_document(id):
+@route('/getDocument')
+def show_document():
+    doc_id = int(request.json['doc_id'])
     db = returnDBobj()
-    sentences = db[0].execute("""SELECT s.sent_value, s.sent_ID, COALESCE(t.tag_value, 'qwertpop'), s.sent_taggable
-        FROM sentences s LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID WHERE sent_doc_ID = """ + str(id) + " ORDER BY s.sent_ID").fetchall()
+    documentData = {}
+    subj_name = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
+    documentData['subj_name'] = subj_name
+    subj_id = db[0].execute("SELECT subj_name FROM subjects s INNER JOIN documents d ON d.doc_subj_ID = s.subj_ID WHERE d.doc_ID = " + str(doc_id))
+    documentData['subj_id'] = subj_id
+    nom = db[0].execute("SELECT doc_name FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
+    documentData['doc_name'] = nom
+    documentData['doc_id'] = doc_id
+    sentences = db[0].execute("""SELECT s.sent_value, s.sent_ID, COALESCE(t.tag_value, ''), COALESCE(t.tag_id, '')
+        FROM sentences s LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID WHERE sent_doc_ID = """ + str(doc_id) + " ORDER BY s.sent_ID").fetchall()
     sents = []
     for x in sentences:
-        sents.append([html.unescape(x[0]), x[1], x[2], x[3]])
-    nom = db[0].execute("SELECT doc_name FROM documents WHERE doc_ID = " + str(id)).fetchall()[0][0]
-    subj_ID = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(id)).fetchall()[0][0]
+        sent = {}
+        sent['value'] = x[0]
+        sent['id'] = int(x[1])
+        if (x[2]!=''):
+            sent['tag_value'] = x[2]
+            sent['tag_id'] = int(x[3])
+        sents.append(sent)
+    documentData['sentences'] = sents
     db[1].close()
-    return template('document_read', rows = sents, nom = nom, sujet = subj_ID)
+    return {"document": documentData}
 
 
 ##########################################
@@ -137,18 +155,14 @@ def show_document(id):
 ##########################################
 @post('/createTag')
 def tag():
-    phrase = request.json.get('phrase_id')
-    marque = request.json.get('marque')
-    ok = True
-    q = "INSERT INTO tags (tag_sent_ID, tag_value) VALUES (" + phrase + ", '" + html.escape(marque) + "')"
-    try:
-        db = returnDBobj()
-        db[0].execute(q)
-        db[1].commit()
-        db[1].close()
-    except:
-        ok = False
-    return str(ok)
+    phrase = str(request.json.get('phrase_id'))
+    marque = str(request.json.get('marque'))
+    db = returnDBobj()
+    db[0].execute("INSERT INTO tags (tag_sent_ID, tag_value) VALUES (" + phrase + ", '" + html.escape(marque) + "')")
+    tag_id = db[0].execute("SELECT tag_id FROM tags WHERE tag_sent_ID = " + phrase + " AND tag_value = '" + html.escape(marque) + "'").fetchall()[0][0]
+    db[1].commit()
+    db[1].close()
+    return {"tag_id": int(tag_id)}
 
 
 @route('/reviewTags/<subj_ID>')
