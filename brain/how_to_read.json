@@ -27,6 +27,8 @@ reading a document
 {"document":{
 	"in_subject_name": "subject_name1",
 	"in_subject_id": 1,
+	"doc_name": "document_name",
+	"doc_id": 5,
 	"sentences": [
 		{"value": "sentence_value1", "id": 1, "tag_value": "tag1", "tag_id": 1},
 		{"value": "sentence_value2", "id": 2}
