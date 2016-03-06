@@ -129,7 +129,7 @@ def show_document():
     documentData = {}
     subj_name = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
     documentData['subj_name'] = subj_name
-    subj_id = db[0].execute("SELECT subj_name FROM subjects s INNER JOIN documents d ON d.doc_subj_ID = s.subj_ID WHERE d.doc_ID = " str(doc_id))
+    subj_id = db[0].execute("SELECT subj_name FROM subjects s INNER JOIN documents d ON d.doc_subj_ID = s.subj_ID WHERE d.doc_ID = " + str(doc_id))
     documentData['subj_id'] = subj_id
     nom = db[0].execute("SELECT doc_name FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
     documentData['doc_name'] = nom
