@@ -6,6 +6,7 @@ import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
+import chalk from 'chalk'
 import config from './config'
 import router from './router'
 import socketIO from 'socket.io'
@@ -29,5 +30,5 @@ io.on(`connection`, socket => {
 })
 
 http.listen(port, () => {
-  console.log(`☆ listening on localhost:${port}`)
+  console.log(chalk.white(`☆ listening on localhost:8000`))
 })

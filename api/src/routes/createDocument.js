@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import chalk from 'chalk'
 import brain from '../../config/domain'
 import User from '../models/User'
 
@@ -17,14 +18,21 @@ export default ({ api }) =>
 
         return res.json()
       })
-      .then(({ id }) => {
+      .then(res => {
         User.findOne({ email: userEmail }, (err, user) => {
           if (err) throw err
 
-          user.subjects = user.subjects.find(x => x.id === id).numDocuments += 1
+          let subject = user.subjects.find(x => x.id === id)
+          subject.numDocuments += 1
 
           user.save((err, user) => {
             if (err) throw err
+
+            console.log(chalk.cyan(`
+              ${user.email} has added a document to ${subject.name}.
+              Number of documents: ${subject.numDocuments}
+            `))
+
             res.json({ id })
           })
         })

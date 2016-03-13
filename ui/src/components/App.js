@@ -176,10 +176,10 @@ export default class App extends Component {
     console.log(event)
   };
 
-  createDocument = async ({ name, author, text, publication, id }) => {
+  createDocument = async ({ title, author, text, publication, id }) => {
     let data = await api({
       endpoint: `createDocument`,
-      body: { name, author, text, publication, id },
+      body: { title, author, text, publication, id },
     })
 
     this.setState({

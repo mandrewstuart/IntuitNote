@@ -66,13 +66,13 @@ def subject_delete():
 @post('/createDocument')
 def create_document():
     response.content_type = 'application/json'
-    nom = request.json.get('nom')
-    contenu = request.json.get('contenu')
+    nom = request.json['title']
+    contenu = request.json['text']
     contenu = html.escape(contenu)
-    auteur = request.json.get('auteur')
+    auteur = request.json['author']
     auteur = html.escape(auteur)
-    sujet = int(request.json.get('sujet'))
-    publication = request.json.get('publication')
+    sujet = request.json['id']
+    publication = request.json['publication']
     publication = html.escape(publication)
     db = returnDBobj()
     db[0].execute("INSERT INTO documents (doc_name, doc_subj_ID, doc_author, doc_publication) VALUES ('" + nom + "', " + str(sujet) + ", '" + auteur + "', '" + publication + "')")
@@ -94,7 +94,7 @@ def create_document():
 
 @post('/getSubject')
 def show_subject():
-    sunj_id = request.json.get('subj_id')
+    sunj_id = request.json['id']
     db = returnDBobj()
     nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(subj_id)).fetchall()
     docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(subj_id)).fetchall()
