@@ -20,7 +20,7 @@ def subject_create():
     return {"id": new_id}
 
 
-@route('/getSubjects')
+@post('/getSubjects')
 def subjects_read():
     db = returnDBobj()
     data = db[0].execute('SELECT * FROM subjects;').fetchall()
