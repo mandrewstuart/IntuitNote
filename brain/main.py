@@ -71,12 +71,14 @@ def create_document():
     contenu = html.escape(contenu)
     auteur = request.json.get('auteur')
     auteur = html.escape(auteur)
-    sujet = request.json.get('sujet')
+    sujet = int(request.json.get('sujet'))
+    publication = request.json.get('publication')
+    publication = html.escape(publication)
     db = returnDBobj()
-    db[0].execute("INSERT INTO documents (doc_name, doc_subj_ID) VALUES ('" + nom + "', " + str(sujet) + ")")
+    db[0].execute("INSERT INTO documents (doc_name, doc_subj_ID, doc_author, doc_publication) VALUES ('" + nom + "', " + str(sujet) + ", '" + auteur + "', '" + publication + "')")
     doc_ID = db[0].execute("SELECT doc_ID FROM documents WHERE doc_name = '" + nom + "' AND doc_subj_ID = " + str(sujet) + ";").fetchall()[0][0]
     doc_ID = int(doc_ID)
-    divise = parse_doc(contenu)
+    divise = parse_doc.parse_sentences(contenu)
     c = db[0].execute('SELECT MAX(sent_ID) FROM sentences;').fetchall()[0][0]
     try:
         c = int(c)
@@ -90,12 +92,12 @@ def create_document():
     return {"document_ID": doc_ID}
 
 
-@route('/getSubject')
+@post('/getSubject')
 def show_subject():
-    sunj_id = request.json.get('sunj_id')
+    sunj_id = request.json.get('subj_id')
     db = returnDBobj()
-    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(sunj_id)).fetchall()
-    docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(sunj_id)).fetchall()
+    nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(subj_id)).fetchall()
+    docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(subj_id)).fetchall()
     all_data = []
     for item in docs:
         document = {}
@@ -122,7 +124,7 @@ def delete_document():
 ##########################################
 #Sentences
 ##########################################
-@route('/getDocument')
+@post('/getDocument')
 def show_document():
     doc_id = int(request.json['doc_id'])
     db = returnDBobj()
@@ -165,11 +167,17 @@ def tag():
     return {"tag_id": int(tag_id)}
 
 
-@route('/reviewTags/<subj_ID>')
+@post('/reviewTags/<subj_ID>')
 def review(subj_ID):
     db = returnDBobj()
+    tagsData = {}
+    subj_id = int(request.json.get('subj_id'))
+    tagsData['subj_id'] = subj_id
+    subj_name = db[0].execute("SELECT subj_name FROM subjects WHERE subj_ID = " + subj_id).fetchall()[0][0]
+    tagsData['subj_name'] = subj_name
     data = db[0].execute("""SELECT
                 d.doc_name
+                , d.doc_ID
                 , se.sent_value
                 , t.tag_value
                 , t.tag_ID
@@ -177,12 +185,21 @@ def review(subj_ID):
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = """ + str(subj_ID) + " ORDER BY se.sent_ID ASC").fetchall()
+    doc_id = -1
+    documents = []
+    for row in data:
+        if (int(row[1])!=doc_id):
+            if (doc_id != -1):
+                documents.append(docData)
+            docData = {}
+            docData['document_name'] = row[0]
+            docData['document_id'] = int(row[1])
     sujet = db[0].execute("SELECT subj_name FROM subjects WHERE subj_ID = " + str(subj_ID)).fetchall()[0][0]
     db[1].close()
     return template('tags_review', nom = sujet, rows = data)
 
 
-@route('/tags/autotag/<doc_ID>')
+@post('/tags/autotag/<doc_ID>')
 def auto_tag(doc_ID):
     #check if there are any tags in that subject yet
     db = returnDBobj()
