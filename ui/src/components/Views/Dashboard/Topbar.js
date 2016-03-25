@@ -1,12 +1,14 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { logout } from 'dux/auth'
 
-export default ({
-  logout,
+let Topbar = ({
+  dispatch,
 }) =>
 <div className="top-row">
   <a
     className="sign-out hvr-underline-from-left"
-    onClick = { logout }
+    onClick = { () => dispatch(logout()) }
   >
     Sign Out
   </a>
@@ -18,3 +20,5 @@ export default ({
     <span className="underline">add more subjects!</span>
   </span>
 </div>
+
+export default connect()(Topbar)

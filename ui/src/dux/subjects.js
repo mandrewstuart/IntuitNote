@@ -1,0 +1,135 @@
+import api from 'utils/api'
+import { LOGIN_SUCCESS } from 'dux/auth'
+
+export let GET_SUBJECTS = `GET_SUBJECTS`
+export let GET_SUBJECT = `GET_SUBJECT`
+export let CREATE_SUBJECT = `CREATE_SUBJECT`
+export let INVALID_SUBJECT = `INVALID_SUBJECT`
+export let DELETE_SUBJECT = `DELETE_SUBJECT`
+export let TOGGLE_SUBJECT_EDITING = `TOGGLE_SUBJECT_EDITING`
+
+export let getSubjects = () =>
+  async dispatch => {
+    let { subjects } = await api({ endpoint: `getSubjects` })
+    dispatch({
+      type: GET_SUBJECTS,
+      payload: { subjects },
+    })
+  }
+
+export let getSubject = ({ id }) =>
+  async dispatch => {
+    let { documents } = await api({
+      endpoint: `getSubject`,
+      body: { id },
+    })
+
+    dispatch({
+      type: GET_SUBJECT,
+      payload: {
+        subjects: this.state.subjects.map(s => ({ ...s, active: s.id === id, documents })),
+      },
+    })
+  }
+
+export let createSubject = ({ name }) =>
+  async dispatch => {
+    if (!name) return dispatch({ type: INVALID_SUBJECT })
+
+    let { id } = await api({
+      endpoint: `createSubject`,
+      body: { name },
+    })
+
+    console.log(`Subject created! ID: `, id)
+
+    dispatch({
+      type: CREATE_SUBJECT,
+      payload: {
+        subjects: [
+          ...this.state.subjects.map(s => ({ ...s, active: false })),
+          {
+            name,
+            id,
+            active: true,
+            createdDate: +new Date(),
+            updatedDate: +new Date(),
+            docs: [],
+          },
+        ],
+      },
+    })
+  }
+
+export let deleteSubject = ({ id }) =>
+  async dispatch => {
+    let data = await api({
+      endpoint: `deleteSubject`,
+      body: { id },
+    })
+
+    dispatch({
+      type: DELETE_SUBJECT,
+      payload: { subjects: this.state.subjects.filter(s => s.id !== id ) },
+    })
+  }
+
+export let toggleSubjectEditing = ({ id, name }) =>
+  async dispatch => {
+    if (this.state.editingSubject) {
+      let data = await api({
+        endpoint: `updateSubject`,
+        body: { id, name },
+      })
+      let { subjects } = this.state
+      subjects.find(x => x.id === id).name = name
+      this.setState({ subjects })
+    }
+    this.setState({ editingSubject: !this.state.editingSubject })
+  };
+
+/*----------------------------------------------------------------------------*/
+
+let intialState = { subjects: [] }
+
+export default (state = intialState, action) => {
+
+  switch (action.type) {
+
+    case LOGIN_SUCCESS:
+    case GET_SUBJECTS:
+      return {
+        ...state,
+        subjects: action.payload.subjects,
+      }
+
+    case GET_SUBJECT:
+      return {
+        ...state,
+        subjects: state.subjects.map(s => ({
+          ...s,
+          active: s.id === id,
+          documents: action.payload.documents,
+        })),
+      }
+
+    case CREATE_SUBJECT:
+      return {
+        ...state,
+        subjects: [
+          ...state.subjects.map(s => ({ ...s, active: false })),
+          {
+            name: action.payload.name,
+            id: action.payload.id,
+            active: true,
+            createdDate: +new Date(),
+            updatedDate: +new Date(),
+            docs: [],
+          },
+        ],
+      }
+
+    default:
+      return state
+  }
+}

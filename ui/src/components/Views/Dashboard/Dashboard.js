@@ -1,24 +1,22 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
+import { logout } from 'dux/auth'
+import { toggleModal } from 'dux/modal'
 
 let name = { value: `` }
 
-export default ({
-  logout,
+let Dashboard = ({
   subjects,
-  openModal,
-  handleDrop,
-  toggleSubjectEditing,
   editingSubject,
-  getDocument,
-  ...props,
+  dispatch,
 }) =>
 <div className="app dashboard">
-  <Sidebar openModal={ openModal } subjects={ subjects } { ...props } />
+  <Sidebar />
 
   <div className="main-area">
-    <Topbar logout={ logout } />
+    <Topbar logout={ () => dispatch(logout()) } />
 
     <div className="subject-area">
       { !subjects.length &&
@@ -35,19 +33,19 @@ export default ({
               : s.name
             }
             <i
-              onClick={ () => toggleSubjectEditing({ name: name.value, id: s.id }) }
+              onClick={ () => dispatch(toggleSubjectEditing({ name: name.value, id: s.id })) }
               className={ `fa fa-${editingSubject ? `check` : `edit`}` }
             />
           </div>
           <div className="subject-toolbar">
             <button
-              onClick={ () => openModal(`NewDocument`) }
+              onClick={ () => dispatch(toggleModal(`NewDocument`)) }
             >
               Add Document
             </button>
             <button
               className="delete-btn"
-              onClick={ () => openModal(`Confirm`) }
+              onClick={ () => dispatch(toggleModal(`Confirm`)) }
             >
               Delete Subject
             </button>
@@ -64,7 +62,7 @@ export default ({
               { s.documents.map(d =>
               <tr key={ d.name }>
                 <td>
-                  <a onClick={ () => getDocument({ id: d.id }) }>{ d.name }</a>
+                  <a onClick={ () => dispatch(getDocument({ id: d.id })) }>{ d.name }</a>
                 </td>
               </tr>
               )}
@@ -76,3 +74,9 @@ export default ({
     </div>
   </div>
 </div>
+
+export default connect(
+  state => ({
+    ...state.subjects,
+  })
+)(Dashboard)

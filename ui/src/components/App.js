@@ -1,238 +1,34 @@
-import React, { Component, Children, cloneElement, PropTypes } from 'react'
-
-/*----------------------------------------------------------------------------*/
-
-import { domain } from 'config'
-import auth from '../auth'
-import isAValidEmail from 'utils/isEmail'
-import api from 'utils/api'
-
-/*----------------------------------------------------------------------------*/
-
-import Modals from 'components/Modals'
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { getSubjects } from 'dux/subjects'
+import { toggleModal } from 'dux/modal'
 import Dialog from 'material-ui/lib/dialog'
 
-/*----------------------------------------------------------------------------*/
-
-import io from 'socket.io-client'
-let socket = io(`${domain}:8080`)
-
-export default class App extends Component {
-  static contextTypes = { router: PropTypes.object };
-
-  constructor (props) {
-    super(props)
-    this.state = {
-
-      /*
-       *  User State
-       */
-
-      loggedIn: auth.loggedIn(),
-      user: { email: localStorage.userEmail },
-      subjects: [],
-
-      /*
-       *  UI State
-       */
-
-      ModalComponent: Modals[`AuthModal`],
-      modalOpen: false,
-      editingSubject: false,
-    }
-  }
-
-  /*
-   *  Startup
-   */
-
+class App extends Component {
   componentDidMount = () => {
-    this.getSubjects()
+    this.props.dispatch(getSubjects())
   }
-
-  getSubjects = async () => {
-    let { subjects } = await api({ endpoint: `getSubjects` })
-    this.setState({ subjects })
-  }
-
-  /*
-   *  UI State Logic
-   */
-
-   openModal = modal =>
-     this.setState({ modalOpen: true, ModalComponent: Modals[modal] });
-
-   closeModal = () =>
-     this.setState({ modalOpen: false, message: `` });
-
-  /*
-   *  Auth Logic
-   */
-
-  login = (type, { email, password }) => {
-    if (!isAValidEmail(email))
-      return this.setState({ message: `Invalid email` })
-
-    auth[type]({ email, password }, response => {
-      if (response.success) {
-
-        console.log(response.user)
-
-        this.setState({
-          loggedIn: response.success,
-          user: response.user,
-          subjects: [ ...response.user.subjects ],
-          modalOpen: false,
-          message: ``,
-        })
-
-        this.context.router.replace(`/dashboard`)
-      }
-
-      else this.setState({ message: response.message })
-    })
-  };
-
-  logout = () => {
-    localStorage.clear()
-    this.context.router.replace(`/`)
-
-    // TODO : reset all the things!
-
-    this.setState({ loggedIn: false, headerColor: `rgb(27, 173, 112)` })
-  };
-
-  /*
-   *  User Logic
-   */
-
-  createSubject = async ({ name }) => {
-    if (!name) return this.setState({ message: `Please name your subject!` })
-
-    let { id } = await api({
-      endpoint: `createSubject`,
-      body: { name }
-    })
-
-    console.log(`Subject created! ID: `, id)
-
-    this.setState({
-      subjects: [
-        ...this.state.subjects.map(s => ({ ...s, active: false })),
-        {
-          name,
-          id,
-          active: true,
-          createdDate: +new Date(),
-          updatedDate: +new Date(),
-          docs: [],
-        },
-      ],
-      message: ``,
-      modalOpen: false,
-    })
-  };
-
-  getSubject = async ({ id }) => {
-    let { documents } = await api({
-      endpoint: `getSubject`,
-      body: { id }
-    })
-
-    this.setState({
-      subjects: this.state.subjects.map(s => ({ ...s, active: s.id === id, documents })),
-    })
-  };
-
-  deleteSubject = async ({ id }) => {
-    let data = await api({
-      endpoint: `deleteSubject`,
-      body: { id },
-    })
-
-    this.setState({
-      subjects: this.state.subjects.filter(s => s.id !== id ),
-      modalOpen: false,
-    })
-  };
-
-  getDocument = async ({ id }) => {
-    let data = await api({
-      endpoint: `getDocument`,
-      body: { id },
-    })
-
-    console.log(data)
-  };
-
-  toggleSubjectEditing = async ({ id, name }) => {
-    if (this.state.editingSubject) {
-      let data = await api({
-        endpoint: `updateSubject`,
-        body: { id, name }
-      })
-      let { subjects } = this.state
-      subjects.find(x => x.id === id).name = name
-      this.setState({ subjects })
-    }
-    this.setState({ editingSubject: !this.state.editingSubject })
-  };
 
   handleDrop = event => {
     console.log(event)
   };
 
-  createDocument = async ({ title, author, text, publication, id }) => {
-    let data = await api({
-      endpoint: `createDocument`,
-      body: { title, author, text, publication, id },
-    })
-
-    this.setState({
-      message: ``,
-      modalOpen: false,
-    })
-  };
-
-  render() {
-    let { ModalComponent, subjects } = this.state
-
-    let children = Children.map(this.props.children, child => {
-      return cloneElement(child, {
-        ...child.props,
-        ...this.props,
-        ...this.state,
-        login: this.login,
-        logout: this.logout,
-        openModal: this.openModal,
-        closeModal: this.closeModal,
-        getSubject: this.getSubject,
-        deleteSubject: this.deleteSubject,
-        getDocument: this.getDocument,
-        toggleSubjectEditing: this.toggleSubjectEditing,
-        socket,
-      })
-    })
+  render () {
+    let {
+      ModalComponent,
+      modalOpen,
+      children,
+      dispatch,
+    } = this.props
 
     return (
       <div id="app">
         <Dialog
-          className="auth-modal"
-          open={ this.state.modalOpen }
-          onRequestClose={ this.handleClose }
+          className="modal-container"
+          open={ modalOpen }
+          onRequestClose={ () => dispatch(toggleModal()) }
         >
-          <ModalComponent
-            closeModal={ this.closeModal }
-            login={ this.login }
-            message={ this.state.message }
-
-            // conditionally add these
-            createSubject={ this.createSubject }
-            deleteSubject={ this.deleteSubject }
-            createDocument={ this.createDocument }
-            subjects={ subjects }
-            handleDrop={ this.handleDrop }
-          />
+          <ModalComponent handleDrop={ this.handleDrop } />
         </Dialog>
 
         { children }
@@ -240,3 +36,9 @@ export default class App extends Component {
     )
   }
 }
+
+export default connect(
+  state => ({
+    ...state.modal,
+  })
+)(App)

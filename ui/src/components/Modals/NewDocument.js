@@ -1,17 +1,19 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { toggleModal } from 'dux/modal'
+import { createDocument } from 'dux/documents'
 import Dropzone from 'react-dropzone'
 
 let title, author, publication, date, text
 
-export default ({
-  closeModal,
+let NewDocument = ({
   message,
+  subjects,
+  dispatch,
   handleDrop,
-  createDocument,
-  subjects
 }) =>
 <div className="modal-content new-document">
-  <div className="close-btn" onClick={ closeModal }>CLOSE ✕</div>
+  <div className="close-btn" onClick={ () => dispatch(toggleModal()) }>CLOSE ✕</div>
   <div className="modal-title">Add A Document</div>
   <div className="subject-data">
     {/*<div className="paste-text-info">
@@ -46,13 +48,13 @@ export default ({
     <div>
       <button
         onClick={
-          () => createDocument({
+          () => dispatch(createDocument({
             title: title.value,
             author: author.value,
             publication: publication.value,
             text: text.value,
-            id: subjects.find(s => s.active).id
-          })
+            id: subjects.find(s => s.active).id,
+          }))
         }
       >
         Add Document
@@ -60,3 +62,10 @@ export default ({
     </div>
   </div>
 </div>
+
+export default connect(
+  state => ({
+    ...state.subjects,
+    ...state.message,
+  })
+)(NewDocument)

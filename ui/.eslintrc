@@ -1,0 +1,21 @@
+{
+  "ecmaFeatures": {
+    "modules": true,
+    "jsx": true
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parser": "babel-eslint",
+  "plugins": [ "react" ],
+  "rules": {
+    "strict": 0,
+    "linebreak-style": [ 2, "unix" ],
+    "comma-dangle": [ 2, "always-multiline" ],
+    "no-unused-vars": 2,
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/react-in-jsx-scope": 2
+  }
+}

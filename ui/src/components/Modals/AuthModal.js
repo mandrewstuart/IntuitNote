@@ -1,38 +1,46 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { toggleModal } from 'dux/modal'
+import { login } from 'dux/auth'
 
 let email, password
 
-export default ({
-  login,
-  closeModal,
+let AuthModal = ({
+  dispatch,
   message,
 }) =>
-  <div className="auth modal-content">
-    <div className="close-btn" onClick={ closeModal }>CLOSE ✕</div>
-    <div className="login form">
-      <input ref={ node => email = node } type="text" placeholder="E-mail address.." />
-      <input ref={ node => password = node } type="password" placeholder="Password.." />
+<div className="auth modal-content">
+  <div className="close-btn" onClick={ () => dispatch(toggleModal()) }>CLOSE ✕</div>
+  <div className="login form">
+    <input ref={ node => email = node } type="text" placeholder="E-mail address.." />
+    <input ref={ node => password = node } type="password" placeholder="Password.." />
 
-      <div className="button-row">
-        <button className="login-btn"
-          onClick={
-            () => {
-              login(`login`, { email: email.value, password: password.value })
-            }
+    <div className="button-row">
+      <button className="login-btn"
+        onClick={
+          () => {
+            dispatch(login(`login`, { email: email.value, password: password.value }))
           }
-        >
-          Log In
-        </button>
-        <button className="register-btn"
-          onClick={
-            () => {
-              login(`signup`, { email: email.value, password: password.value })
-            }
+        }
+      >
+        Log In
+      </button>
+      <button className="register-btn"
+        onClick={
+          () => {
+            dispatch(login(`signup`, { email: email.value, password: password.value }))
           }
-        >
-          Register
-        </button>
-      </div>
-      <div className="error">{ message }</div>
+        }
+      >
+        Register
+      </button>
     </div>
+    <div className="error">{ message }</div>
   </div>
+</div>
+
+export default connect(
+  state => ({
+    ...state.message,
+  })
+)(AuthModal)

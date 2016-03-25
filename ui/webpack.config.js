@@ -1,4 +1,9 @@
-/* global __dirname, module, process, require */
+/* global
+  __dirname,
+  module,
+  process,
+  require
+*/
 
 var path = require('path')
 var webpack = require('webpack')
@@ -25,16 +30,16 @@ module.exports = {
         loaders: [ 'react-hot', 'babel' ],
         include: path.join(__dirname, 'src'),
       },
-      { test: /\.styl$/, loader: 'style-loader!css-loader!stylus-loader' }
+      { test: /\.styl$/, loader: 'style-loader!css-loader!stylus-loader' },
     ],
   },
   resolve: {
     root: path.resolve(__dirname),
      alias: {
        components: 'src/components',
+       dux: 'src/dux',
        style: 'src/style',
        utils: 'src/utils',
-       iso: '../iso/js',
        config: path.join(__dirname, 'config', process.env.NODE_ENV),
      },
      extensions: ['', '.js', '.styl'],

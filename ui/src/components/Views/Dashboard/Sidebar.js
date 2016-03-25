@@ -1,10 +1,11 @@
 import React from 'react'
+import { connect } from 'react-redux'
+import { toggleModal } from 'dux/modal'
 
-export default ({
+let Sidebar = ({
   user,
-  openModal,
   subjects,
-  getSubject,
+  dispatch,
 }) =>
 <div className="sidebar">
   <div className="logo center">ADE</div>
@@ -16,7 +17,7 @@ export default ({
   <div className="subject-nav">
     <div
       className="subject-nav-item"
-      onClick={ () => openModal(`NewSubject`) }
+      onClick={ () => dispatch(toggleModal(`NewSubject`)) }
     >
       <a className="new-subject">New Subject</a>
       <i className="fa fa-plus" />
@@ -25,7 +26,7 @@ export default ({
     <div
       key={ s.id }
       className={ `subject-nav-item ${s.active ? `active` : ``}` }
-      onClick={ () => getSubject({ id: s.id }) }
+      onClick={ () => dispatch(getSubject({ id: s.id })) }
     >
       <a className="new-subject">{ s.name }</a>
       <i className="fa fa-file" />
@@ -33,3 +34,10 @@ export default ({
     )}
   </div>
 </div>
+
+export default connect(
+  state => ({
+    ...state.auth,
+    ...state.subjects,
+  })
+)(Sidebar)

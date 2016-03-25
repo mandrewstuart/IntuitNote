@@ -1,3 +1,10 @@
+/* global
+  require,
+  __dirname,
+  module,
+  process
+*/
+
 var path = require('path')
 
 module.exports = {
@@ -16,13 +23,14 @@ module.exports = {
         loaders: [ 'react-hot', 'babel' ],
         include: path.join(__dirname, 'src'),
       },
-      { test: /\.styl$/, loader: 'style-loader!css-loader!stylus-loader' }
+      { test: /\.styl$/, loader: 'style-loader!css-loader!stylus-loader' },
     ],
   },
   resolve: {
     root: path.resolve(__dirname),
      alias: {
       components: 'src/components',
+      dux: 'src/dux',
       style: 'src/style',
       utils: 'src/utils',
       config: path.join(__dirname, 'config', process.env.NODE_ENV),
