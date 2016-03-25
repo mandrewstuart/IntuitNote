@@ -11,6 +11,7 @@ export default ({
   handleDrop,
   toggleSubjectEditing,
   editingSubject,
+  getDocument,
   ...props,
 }) =>
 <div className="app dashboard">
@@ -51,6 +52,24 @@ export default ({
               Delete Subject
             </button>
           </div>
+        </div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+              </tr>
+            </thead>
+            <tbody>
+              { s.documents.map(d =>
+              <tr key={ d.name }>
+                <td>
+                  <a onClick={ () => getDocument({ id: d.id }) }>{ d.name }</a>
+                </td>
+              </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
       )}

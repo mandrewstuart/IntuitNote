@@ -7,8 +7,10 @@ import {
   getSubject,
   deleteSubject,
   updateSubject,
-  createDocument
+  createDocument,
+  getDocument
 } from './routes'
+
 
 export default ({ app, io }) => {
 
@@ -21,6 +23,8 @@ export default ({ app, io }) => {
   deleteSubject({ api })
   updateSubject({ api })
   createDocument({ api })
+
+  getDocument({ api })
 
   return api
 }

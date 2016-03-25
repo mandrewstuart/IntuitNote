@@ -134,16 +134,13 @@ export default class App extends Component {
   };
 
   getSubject = async ({ id }) => {
-    let data = await api({
+    let { documents } = await api({
       endpoint: `getSubject`,
       body: { id }
     })
 
-    console.log('Retrieved subject:', data)
-
     this.setState({
-      subjects:
-        this.state.subjects.map(s => ({ ...s, active: s.id === id })),
+      subjects: this.state.subjects.map(s => ({ ...s, active: s.id === id, documents })),
     })
   };
 
@@ -157,6 +154,15 @@ export default class App extends Component {
       subjects: this.state.subjects.filter(s => s.id !== id ),
       modalOpen: false,
     })
+  };
+
+  getDocument = async ({ id }) => {
+    let data = await api({
+      endpoint: `getDocument`,
+      body: { id },
+    })
+
+    console.log(data)
   };
 
   toggleSubjectEditing = async ({ id, name }) => {
@@ -202,6 +208,7 @@ export default class App extends Component {
         closeModal: this.closeModal,
         getSubject: this.getSubject,
         deleteSubject: this.deleteSubject,
+        getDocument: this.getDocument,
         toggleSubjectEditing: this.toggleSubjectEditing,
         socket,
       })

@@ -18,7 +18,7 @@ export default ({ api }) =>
 
         return res.json()
       })
-      .then(res => {
+      .then(response => {
         User.findOne({ email: userEmail }, (err, user) => {
           if (err) throw err
 

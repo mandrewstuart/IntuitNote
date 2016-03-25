@@ -94,7 +94,7 @@ def create_document():
 
 @post('/getSubject')
 def show_subject():
-    sunj_id = request.json['id']
+    subj_id = request.json['id']
     db = returnDBobj()
     nom = db[0].execute('SELECT subj_name FROM subjects WHERE subj_ID = ' + str(subj_id)).fetchall()
     docs = db[0].execute('SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = ' + str(subj_id)).fetchall()
@@ -126,12 +126,10 @@ def delete_document():
 ##########################################
 @post('/getDocument')
 def show_document():
-    doc_id = int(request.json['doc_id'])
+    doc_id = request.json['id']
     db = returnDBobj()
     documentData = {}
-    subj_name = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
-    documentData['subj_name'] = subj_name
-    subj_id = db[0].execute("SELECT subj_name FROM subjects s INNER JOIN documents d ON d.doc_subj_ID = s.subj_ID WHERE d.doc_ID = " + str(doc_id))
+    subj_id = db[0].execute("SELECT doc_subj_ID FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
     documentData['subj_id'] = subj_id
     nom = db[0].execute("SELECT doc_name FROM documents WHERE doc_ID = " + str(doc_id)).fetchall()[0][0]
     documentData['doc_name'] = nom
@@ -149,6 +147,9 @@ def show_document():
         sents.append(sent)
     documentData['sentences'] = sents
     db[1].close()
+    import pprint
+    pprint.pprint(documentData)
+
     return {"document": documentData}
 
 

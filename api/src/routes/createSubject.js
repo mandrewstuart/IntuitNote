@@ -21,7 +21,7 @@ export default ({ api }) =>
         User.findOne({ email: userEmail }, (err, user) => {
           if (err) throw err
 
-          user.subjects = [ ...user.subjects, { name, id } ]
+          user.subjects = [ ...user.subjects, { name, id, numDocuments: 0 } ]
 
           user.save((err, user) => {
             if (err) throw err
