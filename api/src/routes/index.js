@@ -5,6 +5,7 @@ import deleteSubject from './deleteSubject'
 import updateSubject from './updateSubject'
 import createDocument from './createDocument'
 import getDocument from './getDocument'
+import createTag from './createTag'
 
 export {
   getSubjects,
@@ -14,4 +15,5 @@ export {
   updateSubject,
   createDocument,
   getDocument,
+  createTag
 }

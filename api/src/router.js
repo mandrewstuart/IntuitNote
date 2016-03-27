@@ -9,6 +9,7 @@ import {
   updateSubject,
   createDocument,
   getDocument,
+  createTag,
 } from './routes'
 
 
@@ -24,6 +25,7 @@ export default ({ app }) => {
   updateSubject({ api })
   createDocument({ api })
   getDocument({ api })
+  createTag({ api })
 
   return api
 }

@@ -5,6 +5,8 @@ import { GET_SUBJECT, CREATE_SUBJECT } from 'dux/subjects'
 export let GET_DOCUMENT = `GET_DOCUMENT`
 export let CREATE_DOCUMENT = `CREATE_DOCUMENT`
 export let DELETE_DOCUMENT = `DELETE_DOCUMENT`
+export let TAG_SENTENCE = `TAG_SENTENCE`
+export let CREATE_TAG = `CREATE_TAG`
 
 export let getDocument = ({ id }) =>
   async dispatch => {
@@ -35,9 +37,30 @@ export let createDocument = ({ title, author, text, publication, id }) =>
     })
   }
 
+export let tagSentence = ({ sentence }) => ({
+  type: TAG_SENTENCE,
+  payload: { sentence },
+})
+
+export let createTag = ({ id, value }) =>
+  async dispatch => {
+    let { tag_id } = await api({
+      endpoint: `createTag`,
+      body: { id, value },
+    })
+
+    dispatch({
+      type: CREATE_TAG,
+      payload: { tag_id },
+    })
+  }
+
 /*----------------------------------------------------------------------------*/
 
-let intialState = { documents: [] }
+let intialState = {
+  documents: [],
+  sentenceBeingTagged: {},
+}
 
 export default (state = intialState, action) => {
 
@@ -79,6 +102,12 @@ export default (state = intialState, action) => {
       return {
         ...state,
         documents: intialState.documents,
+      }
+
+    case TAG_SENTENCE:
+      return {
+        ...state,
+        sentenceBeingTagged: action.payload.sentence,
       }
 
     case DELETE_DOCUMENT:

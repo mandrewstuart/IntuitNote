@@ -158,8 +158,8 @@ def show_document():
 ##########################################
 @post('/createTag')
 def tag():
-    phrase = str(request.json.get('phrase_id'))
-    marque = str(request.json.get('marque'))
+    phrase = str(request.json['id'])
+    marque = request.json['value']
     db = returnDBobj()
     db[0].execute("INSERT INTO tags (tag_sent_ID, tag_value) VALUES (" + phrase + ", '" + html.escape(marque) + "')")
     tag_id = db[0].execute("SELECT tag_id FROM tags WHERE tag_sent_ID = " + phrase + " AND tag_value = '" + html.escape(marque) + "'").fetchall()[0][0]

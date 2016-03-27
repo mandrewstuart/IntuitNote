@@ -61,14 +61,14 @@ export let createSubject = ({ name }) =>
 
 export let deleteSubject = ({ id }) =>
   async dispatch => {
-    let data = await api({
+    await api({
       endpoint: `deleteSubject`,
       body: { id },
     })
 
     dispatch({
       type: DELETE_SUBJECT,
-      payload: { id }
+      payload: { id },
     })
   }
 
@@ -122,7 +122,7 @@ export default (state = intialState, action) => {
     case DELETE_SUBJECT:
       return {
         ...state,
-        subjects: state.subjects.filter(s => s.id !== action.payload.id ),
+        subjects: state.subjects.filter(s => s.id !== action.payload.id),
       }
 
     default:
