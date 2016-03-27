@@ -33,7 +33,7 @@ export default ({ api }) =>
               Number of documents: ${subject.numDocuments}
             `))
 
-            res.json({ id })
+            res.json({ id: response.document_ID })
           })
         })
       })

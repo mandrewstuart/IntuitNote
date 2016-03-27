@@ -4,7 +4,7 @@ import brain from '../../config/domain'
 //
 export default ({ api }) =>
   api.post(`/getDocument`, (req, res) => {
-    let { userEmail, id } = req.body
+    let { id } = req.body
 
     fetch(`${brain}/getDocument`, {
       method: `POST`,

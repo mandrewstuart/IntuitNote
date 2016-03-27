@@ -3,7 +3,7 @@ import brain from '../../config/domain'
 
 export default ({ api }) =>
   api.post(`/getSubject`, (req, res) => {
-    let { userEmail, id } = req.body
+    let { id } = req.body
 
     fetch(`${brain}/getSubject`, {
       method: `POST`,

@@ -54,7 +54,6 @@ export let createSubject = ({ name }) =>
           active: true,
           createdDate: +new Date(),
           updatedDate: +new Date(),
-          docs: [],
         },
       },
     })
@@ -85,7 +84,7 @@ export let toggleSubjectEditing = ({ id, name }) =>
       this.setState({ subjects })
     }
     this.setState({ editingSubject: !this.state.editingSubject })
-  };
+  }
 
 /*----------------------------------------------------------------------------*/
 
@@ -108,7 +107,6 @@ export default (state = intialState, action) => {
         subjects: state.subjects.map(s => ({
           ...s,
           active: s.id === action.payload.id,
-          documents: action.payload.documents,
         })),
       }
 

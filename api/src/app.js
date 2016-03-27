@@ -9,16 +9,15 @@ import mongoose from 'mongoose'
 import chalk from 'chalk'
 import config from './config'
 import router from './router'
-import socketIO from 'socket.io'
 import { Server } from 'http'
 
-let app = express()
+mongoose.connect(config.database)
 
+let app = express()
 let http = Server(app)
-let io = socketIO(http)
 
 let port = process.env.PORT || 8080
-mongoose.connect(config.database)
+
 app.set(`superSecret`, config.secret)
 
 app.use(cors())

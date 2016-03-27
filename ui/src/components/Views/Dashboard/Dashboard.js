@@ -1,9 +1,10 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Sidebar from './Sidebar'
-import Topbar from './Topbar'
 import { logout } from 'dux/auth'
 import { toggleModal } from 'dux/modal'
+import Sidebar from './Sidebar'
+import Topbar from './Topbar'
+import DocumentsList from './DocumentsList'
 
 let name = { value: `` }
 
@@ -11,6 +12,7 @@ let Dashboard = ({
   subjects,
   editingSubject,
   dispatch,
+  documents,
 }) =>
   <div className="app dashboard">
     <Sidebar />
@@ -37,12 +39,14 @@ let Dashboard = ({
                   className={ `fa fa-${editingSubject ? `check` : `edit`}` }
                 />
               </div>
+
               <div className="subject-toolbar">
                 <button
                   onClick={ () => dispatch(toggleModal(`NewDocument`)) }
                 >
                   Add Document
                 </button>
+
                 <button
                   className="delete-btn"
                   onClick={ () => dispatch(toggleModal(`Confirm`)) }
@@ -51,24 +55,13 @@ let Dashboard = ({
                 </button>
               </div>
             </div>
-            <div>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Title</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  { s.documents.map(d =>
-                    <tr key={ d.name }>
-                      <td>
-                        <a onClick={ () => dispatch(getDocument({ id: d.id })) }>{ d.name }</a>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+
+            { !!documents.length &&
+              <DocumentsList />
+            }
+            { !!documents.length ||
+              <div>Begin by adding a document!</div>
+            }
           </div>
         )}
       </div>
@@ -78,5 +71,6 @@ let Dashboard = ({
 export default connect(
   state => ({
     ...state.subjects,
+    ...state.documents,
   })
 )(Dashboard)

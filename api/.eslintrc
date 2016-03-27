@@ -1,0 +1,23 @@
+{
+  "ecmaFeatures": {
+    "modules": true,
+    "jsx": true
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "parser": "babel-eslint",
+  "rules": {
+    "strict": 0,
+    "linebreak-style": [ 2, "unix" ],
+    "comma-dangle": [ 2, "always-multiline" ],
+    "no-unused-vars": 2,
+    "semi": [2, "never"],
+    "no-var": 2,
+    "arrow-spacing": 2,
+    "object-shorthand": 2,
+    "prefer-arrow-callback": 2,
+    "no-useless-constructor": 2
+  }
+}

@@ -8,7 +8,7 @@ import {
   deleteSubject,
   updateSubject,
   createDocument,
-  getDocument
+  getDocument,
 } from './routes'
 
 
