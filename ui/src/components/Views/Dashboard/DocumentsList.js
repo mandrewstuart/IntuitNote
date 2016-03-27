@@ -15,12 +15,14 @@ let DocumentsList = ({
 
     <div>
       { documents.map(d =>
-        <div key={ d.id } className="table-row">
+        // TODO: unify document id -> id
+        <div key={ d.id || d.doc_id } className="table-row">
           <a
             style={{ flex: 8 }}
             onClick={ () => dispatch(getDocument({ id: d.id })) }
           >
-            { d.name }
+            {/* TODO: unify document name -> title */}
+            { d.name || d.doc_name }
           </a>
 
           <a

@@ -15,7 +15,7 @@ export let getDocument = ({ id }) =>
 
     dispatch({
       type: GET_DOCUMENT,
-      payload: { document },
+      payload: { document, id },
     })
   }
 
@@ -52,6 +52,23 @@ export default (state = intialState, action) => {
         ],
       }
 
+    case GET_DOCUMENT:
+      console.log('aaa', {
+        ...state,
+        documents: [
+          ...state.documents.filter(d => d.id !== action.payload.id),
+          { ...action.payload.document, active: true },
+        ],
+      })
+
+      return {
+        ...state,
+        documents: [
+          ...state.documents.filter(d => d.id !== action.payload.id),
+          { ...action.payload.document, active: true },
+        ],
+      }
+
     case GET_SUBJECT:
       return {
         ...state,
@@ -65,7 +82,6 @@ export default (state = intialState, action) => {
       }
 
     case DELETE_DOCUMENT:
-    case GET_DOCUMENT:
     default:
       return state
   }

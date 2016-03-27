@@ -20,6 +20,7 @@
     "object-shorthand": 2,
     "prefer-arrow-callback": 2,
     "no-useless-constructor": 2,
+    "space-in-parens": [2, "never"],
     "react/jsx-uses-react": 2,
     "react/jsx-uses-vars": 2,
     "react/react-in-jsx-scope": 2,

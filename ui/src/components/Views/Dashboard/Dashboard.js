@@ -4,6 +4,7 @@ import { logout } from 'dux/auth'
 import { toggleModal } from 'dux/modal'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
+import Document from './Document'
 import DocumentsList from './DocumentsList'
 
 let name = { value: `` }
@@ -56,7 +57,22 @@ let Dashboard = ({
               </div>
             </div>
 
-            { !!documents.length &&
+            { !!documents.length && documents.some(d => d.active) &&
+              documents.filter(d => d.active).map(d =>
+                <div>
+                  <div>{ d.name || d.doc_name }</div>
+                  <div>
+                    <p>
+                      { d.sentences.map(s =>
+                        <span className="sentence">{ s.value }</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )
+            }
+
+            { !!documents.length && documents.every(d => !d.active) &&
               <DocumentsList />
             }
             { !!documents.length ||

@@ -4,9 +4,7 @@ import getSubject from './getSubject'
 import deleteSubject from './deleteSubject'
 import updateSubject from './updateSubject'
 import createDocument from './createDocument'
-
 import getDocument from './getDocument'
-
 
 export {
   getSubjects,
