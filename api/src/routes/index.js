@@ -1,7 +1,7 @@
 import getSubjects from './getSubjects'
 import createSubject from './createSubject'
 import getSubject from './getSubject'
-import deleteSubject from './getSubject'
+import deleteSubject from './deleteSubject'
 import updateSubject from './updateSubject'
 import createDocument from './createDocument'
 
@@ -15,6 +15,5 @@ export {
   deleteSubject,
   updateSubject,
   createDocument,
-
-  getDocument
+  getDocument,
 }

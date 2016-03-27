@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch'
+import User from '../models/User'
 import brain from '../../config/domain'
 
 export default ({ api }) =>
@@ -20,12 +21,16 @@ export default ({ api }) =>
         User.findOne({ email: userEmail }, (err, user) => {
           if (err) throw err
 
-          user.subjects = user.subjects.filter(x => x.id !== id)
+          if (user) {
+            user.subjects = user.subjects.filter(x => x.id !== id)
 
-          user.save((err, user) => {
-            if (err) throw err
-            res.json({ message: `Subject deleted.` })
-          })
+            user.save((err, user) => {
+              if (err) throw err
+              res.json({ message: `Subject deleted.` })
+            })
+          }
+
+          else res.json({ message: `User not found.` })
         })
       })
       .catch(error => res.json({ error: error.message }))

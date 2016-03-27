@@ -24,11 +24,8 @@ app.set(`superSecret`, config.secret)
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
-io.on(`connection`, socket => {
-  app.use('/api', router({ app, socket, io }))
-})
+app.use('/api', router({ app }))
 
 http.listen(port, () => {
-  console.log(chalk.white(`☆ listening on localhost:8000`))
+  console.log(chalk.white(`☆ listening on localhost:${port}`))
 })

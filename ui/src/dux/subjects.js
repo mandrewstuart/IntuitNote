@@ -1,4 +1,6 @@
 import api from 'utils/api'
+import auth from '../auth'
+
 import { LOGIN_SUCCESS } from 'dux/auth'
 
 export let GET_SUBJECTS = `GET_SUBJECTS`
@@ -10,11 +12,13 @@ export let TOGGLE_SUBJECT_EDITING = `TOGGLE_SUBJECT_EDITING`
 
 export let getSubjects = () =>
   async dispatch => {
-    let { subjects } = await api({ endpoint: `getSubjects` })
-    dispatch({
-      type: GET_SUBJECTS,
-      payload: { subjects },
-    })
+    if (auth.loggedIn()) {
+      let { subjects } = await api({ endpoint: `getSubjects` })
+      dispatch({
+        type: GET_SUBJECTS,
+        payload: { subjects },
+      })
+    }
   }
 
 export let getSubject = ({ id }) =>
@@ -26,9 +30,7 @@ export let getSubject = ({ id }) =>
 
     dispatch({
       type: GET_SUBJECT,
-      payload: {
-        subjects: this.state.subjects.map(s => ({ ...s, active: s.id === id, documents })),
-      },
+      payload: { id, documents },
     })
   }
 
@@ -46,17 +48,14 @@ export let createSubject = ({ name }) =>
     dispatch({
       type: CREATE_SUBJECT,
       payload: {
-        subjects: [
-          ...this.state.subjects.map(s => ({ ...s, active: false })),
-          {
-            name,
-            id,
-            active: true,
-            createdDate: +new Date(),
-            updatedDate: +new Date(),
-            docs: [],
-          },
-        ],
+        subject: {
+          name,
+          id,
+          active: true,
+          createdDate: +new Date(),
+          updatedDate: +new Date(),
+          docs: [],
+        },
       },
     })
   }
@@ -70,7 +69,7 @@ export let deleteSubject = ({ id }) =>
 
     dispatch({
       type: DELETE_SUBJECT,
-      payload: { subjects: this.state.subjects.filter(s => s.id !== id ) },
+      payload: { id }
     })
   }
 
@@ -108,7 +107,7 @@ export default (state = intialState, action) => {
         ...state,
         subjects: state.subjects.map(s => ({
           ...s,
-          active: s.id === id,
+          active: s.id === action.payload.id,
           documents: action.payload.documents,
         })),
       }
@@ -118,15 +117,14 @@ export default (state = intialState, action) => {
         ...state,
         subjects: [
           ...state.subjects.map(s => ({ ...s, active: false })),
-          {
-            name: action.payload.name,
-            id: action.payload.id,
-            active: true,
-            createdDate: +new Date(),
-            updatedDate: +new Date(),
-            docs: [],
-          },
+          action.payload.subject,
         ],
+      }
+
+    case DELETE_SUBJECT:
+      return {
+        ...state,
+        subjects: state.subjects.filter(s => s.id !== action.payload.id ),
       }
 
     default:

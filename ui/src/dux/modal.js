@@ -1,6 +1,6 @@
 import Modals from 'components/Modals'
 
-import { CREATE_SUBJECT } from 'dux/subjects'
+import { CREATE_SUBJECT, DELETE_SUBJECT } from 'dux/subjects'
 import { LOGIN_SUCCESS } from 'dux/auth'
 
 export let OPEN_MODAL = `OPEN_MODAL`
@@ -30,6 +30,7 @@ export default (state = intialState, action) => {
       }
 
     case CREATE_SUBJECT:
+    case DELETE_SUBJECT:
     case LOGIN_SUCCESS:
     case CLOSE_MODAL:
       return {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { toggleModal } from 'dux/modal'
+import { getSubject } from 'dux/subjects'
 
 let Sidebar = ({
   user,

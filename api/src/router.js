@@ -12,7 +12,7 @@ import {
 } from './routes'
 
 
-export default ({ app, io }) => {
+export default ({ app }) => {
 
   let api = express.Router()
 
@@ -23,7 +23,6 @@ export default ({ app, io }) => {
   deleteSubject({ api })
   updateSubject({ api })
   createDocument({ api })
-
   getDocument({ api })
 
   return api

@@ -1,3 +1,5 @@
+import api from 'utils/api'
+
 export let GET_DOCUMENT = `GET_DOCUMENT`
 export let CREATE_DOCUMENT = `CREATE_DOCUMENT`
 export let DELETE_DOCUMENT = `DELETE_DOCUMENT`
