@@ -7,7 +7,7 @@ export default async ({ endpoint, body }) => {
     body: JSON.stringify({
       token: localStorage.token,
       userEmail: localStorage.userEmail,
-      ...body
+      ...body,
     }),
   })
   return response.json()

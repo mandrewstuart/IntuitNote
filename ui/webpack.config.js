@@ -35,14 +35,14 @@ module.exports = {
   },
   resolve: {
     root: path.resolve(__dirname),
-     alias: {
-       components: 'src/components',
-       dux: 'src/dux',
-       style: 'src/style',
-       utils: 'src/utils',
-       config: path.join(__dirname, 'config', process.env.NODE_ENV),
-     },
-     extensions: ['', '.js', '.styl'],
+    alias: {
+      components: 'src/components',
+      dux: 'src/dux',
+      style: 'src/style',
+      utils: 'src/utils',
+      config: `config/${process.env.NODE_ENV}`,
+    },
+    extensions: ['', '.js', '.styl'],
   },
   node: {
     fs: 'empty',

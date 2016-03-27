@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk';
+import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 import { Router, Route, browserHistory} from 'react-router'
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux'
@@ -29,11 +29,11 @@ let history = syncHistoryWithStore(browserHistory, store)
 let requireAuth = (nextState, replace) => !auth.loggedIn() && replace('/')
 
 export default
-<Provider store={ store }>
-  <Router history={ history }>
-    <Route component={ App }>
-      <Route path="/" component={ Home } />
-      <Route path="/dashboard" component={ Dashboard } onEnter={ requireAuth } />
-    </Route>
-  </Router>
-</Provider>
+  <Provider store={ store }>
+    <Router history={ history }>
+      <Route component={ App }>
+        <Route path="/" component={ Home } />
+        <Route path="/dashboard" component={ Dashboard } onEnter={ requireAuth } />
+      </Route>
+    </Router>
+  </Provider>
