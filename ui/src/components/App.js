@@ -4,7 +4,7 @@ import { getSubjects } from 'dux/subjects'
 import { toggleModal } from 'dux/modal'
 import Dialog from 'material-ui/lib/dialog'
 
-class App extends Component {
+export class App extends Component {
   componentDidMount = () => {
     this.props.dispatch(getSubjects())
   }
