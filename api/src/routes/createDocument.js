@@ -22,7 +22,9 @@ export default ({ api }) =>
         User.findOne({ email: userEmail }, (err, user) => {
           if (err) throw err
 
-          let subject = user.subjects.find(x => +x.id === id)
+          console.log(id, user.subjects)
+
+          let subject = user.subjects.find(x => +x.id === +id)
           subject.numDocuments += 1
 
           user.save((err, user) => {

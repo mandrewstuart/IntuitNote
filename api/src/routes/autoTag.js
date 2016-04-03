@@ -6,8 +6,6 @@ export default ({ api }) =>
   api.post(`/autoTag`, (req, res) => {
     let { id } = req.body
 
-    console.log('id is', id)
-
     fetch(`${brain}/autoTag`, {
       method: `POST`,
       headers: { 'Content-Type': 'application/json' },
@@ -20,6 +18,7 @@ export default ({ api }) =>
         return res.json()
       })
       .then(data => {
+          if (data.error) res.json({ message: data.error })
         // User.findOne({ email: userEmail }, (err, user) => {
         //   if (err) throw err
         //
@@ -29,9 +28,7 @@ export default ({ api }) =>
         //   })
         // })
 
-        console.log(data)
-
-        res.json({ data: 'heyhey' })
+        res.json({ data })
       })
       .catch(error => res.json({ error: error.message }))
   })

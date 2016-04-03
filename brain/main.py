@@ -286,20 +286,29 @@ def review(subj_ID):
     return template('tags_review', nom = sujet, rows = data)
 
 
-@post('/tags/autotag/<doc_ID>')
-def auto_tag(doc_ID):
+@post('/autoTag')
+def auto_tag():
     #check if there are any tags in that subject yet
     cursor, conn = connect_to_db()
+
+    doc_id = request.json['id']
+
+    print('doc_id', doc_id)
+
     tag_count = cursor.execute("""SELECT
                 COUNT(*)
                 FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
-                                    WHERE doc_ID = """ + str(doc_ID) + ") AND doc_ID <> " + str(doc_ID)).fetchall()[0][0]
+                                    WHERE doc_ID = """ + str(doc_id) + ") AND doc_ID <> " + str(doc_id)).fetchall()[0][0]
+
+    print('tag_count', tag_count)
     #inform the user if they still need to tag something already
     if (tag_count == 0):
-        return "You haven't tagged anything for this subject yet. <a href='/'>main</a>"
+        return {
+            'error': "You haven't tagged anything for this subject yet. <a href='/'>main</a>"
+        }
     else:
     #pull with and without tags separately
         data = cursor.execute("""SELECT sent_value, tag_value
@@ -308,13 +317,13 @@ def auto_tag(doc_ID):
                         WHERE sent_doc_ID in (SELECT DISTINCT doc_ID
                         FROM documents
                         WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
-                                            WHERE doc_ID = """ + str(doc_ID) + """)
-                        AND doc_ID <> """ + str(doc_ID) + ") ORDER BY sent_ID").fetchall()
+                                            WHERE doc_ID = """ + str(doc_id) + """)
+                        AND doc_ID <> """ + str(doc_id) + ") ORDER BY sent_ID").fetchall()
         output = []
         for x in data:
             output.append([html.unescape(x[0])])
         #machine learning
-        target = cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_ID) + ' ORDER BY sent_ID').fetchall()
+        target = cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID').fetchall()
         clean_target = []
         for x in target:
             clean_target.append([html.unescape(x[0])])
@@ -328,15 +337,19 @@ def auto_tag(doc_ID):
             Y.append( x[1] if (x[1]!= None) else 'None' )
         X = A[:len(output)]
         Z = A[len(output):]
-        cusster = cussterify.proxit(X, Z, Y)
+        cusster = custom_classify.proxit(X, Z, Y)
         suggestions = cusster[0]
         suggested = []
         for x in range(0,len(suggestions)):
             if (suggestions[x]!='None'):
                 suggested.append([suggestions[x], clean_target[x][0]])
+
     conn.commit()
     conn.close()
-    return template('auto_tag_review', rows = suggested)
+
+    print('>>', suggested)
+
+    return { 'suggested': suggested }
 
 
 run(host="localhost", port=5000, reloader=True)
