@@ -1,7 +1,7 @@
 import { domain } from 'config'
 
 export default {
-  signup: async function (body, cb) {
+  signup: async (body, cb) => {
     let response = await fetch(`${domain}:8080/signup`, {
       method: `POST`,
       headers: {
@@ -15,7 +15,7 @@ export default {
     else cb({ success, message })
   },
 
-  login: async function (body, cb) {
+  login: async (body, cb) =>  {
     let response = await fetch(`${domain}:8080/api/authenticate`, {
       method: `POST`,
       headers: { 'Content-Type': `application/json` },
@@ -40,7 +40,7 @@ export default {
     if (cb) cb()
   },
 
-  loggedIn() {
+  loggedIn () {
     return !!localStorage.token
   },
 }

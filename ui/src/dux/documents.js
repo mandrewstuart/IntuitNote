@@ -76,14 +76,6 @@ export default (state = intialState, action) => {
       }
 
     case GET_DOCUMENT:
-      console.log('aaa', {
-        ...state,
-        documents: [
-          ...state.documents.filter(d => d.id !== action.payload.id),
-          { ...action.payload.document, active: true },
-        ],
-      })
-
       return {
         ...state,
         documents: [

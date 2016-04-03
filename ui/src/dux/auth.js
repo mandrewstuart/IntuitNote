@@ -13,6 +13,7 @@ export let login = (type, { email, password }) =>
         type: LOGIN_FAIL,
         payload: { message: `Invalid email` },
       })
+
       return
     }
 
