@@ -2,10 +2,10 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { logout } from 'dux/auth'
 import { toggleModal } from 'dux/modal'
-import { tagSentence } from 'dux/documents'
+import { tagSentence, autoTag } from 'dux/documents'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
-import Document from './Document'
+// import Document from './Document'
 import DocumentsList from './DocumentsList'
 
 // import Tooltip from 'material-ui/lib/tooltip'
@@ -65,6 +65,13 @@ let Dashboard = ({
               documents.filter(d => d.active).map(d =>
                 <div key={ d.id || d.doc_id }>
                   <div>{ d.name || d.doc_name }</div>
+
+                  <button
+                    onClick={ () => dispatch(autoTag({ id: d.doc_id })) }
+                  >
+                    Suggest Tags
+                  </button>
+
                   <div>
                     <div>
                       { d.sentences.map(s =>
@@ -88,7 +95,7 @@ let Dashboard = ({
             { !!documents.length && documents.every(d => !d.active) &&
               <DocumentsList />
             }
-            
+
             { !!documents.length ||
               <div>Begin by adding a document!</div>
             }

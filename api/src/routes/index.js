@@ -6,6 +6,7 @@ import updateSubject from './updateSubject'
 import createDocument from './createDocument'
 import getDocument from './getDocument'
 import createTag from './createTag'
+import autoTag from './autoTag'
 
 export {
   getSubjects,
@@ -15,5 +16,6 @@ export {
   updateSubject,
   createDocument,
   getDocument,
-  createTag
+  createTag,
+  autoTag
 }

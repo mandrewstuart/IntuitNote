@@ -10,6 +10,7 @@ import {
   createDocument,
   getDocument,
   createTag,
+  autoTag,
 } from './routes'
 
 
@@ -26,6 +27,7 @@ export default ({ app }) => {
   createDocument({ api })
   getDocument({ api })
   createTag({ api })
+  autoTag({ api })
 
   return api
 }

@@ -7,6 +7,7 @@ export let CREATE_DOCUMENT = `CREATE_DOCUMENT`
 export let DELETE_DOCUMENT = `DELETE_DOCUMENT`
 export let TAG_SENTENCE = `TAG_SENTENCE`
 export let CREATE_TAG = `CREATE_TAG`
+export let AUTOTAG = `AUTOTAG`
 
 export let getDocument = ({ id }) =>
   async dispatch => {
@@ -52,6 +53,21 @@ export let createTag = ({ id, value }) =>
     dispatch({
       type: CREATE_TAG,
       payload: { tag_id },
+    })
+  }
+
+export let autoTag = ({ id }) =>
+  async dispatch => {
+    let data = await api({
+      endpoint: `autoTag`,
+      body: { id },
+    })
+
+    console.log(data)
+    
+    dispatch({
+      type: AUTOTAG,
+      payload: data,
     })
   }
 
