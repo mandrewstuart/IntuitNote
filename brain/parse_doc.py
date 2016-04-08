@@ -1,22 +1,21 @@
 def parse_sentences(contenu):
-    stop_chars = ['.', '?', '!', "\r\n", "\n"]
+    stop_chars = ['.', '?', '!', "\n"]
     divise = []
     debut = 0
-    while ((contenu[debut:].find(stop_chars[0])>-1) or (contenu[debut:].find(stop_chars[1])>-1)):
-        a = contenu[debut:].find(stop_chars[0])
-        b = contenu[debut:].find(stop_chars[1])
-        if (a > b and b > -1):
-            divise.append(contenu[debut:debut+b+1])
-            debut = debut + b + 1
-        elif (b > a and a > -1):
-            divise.append(contenu[debut:debut+a+1])
-            debut = debut + a + 1
-        elif (a > b and b == -1):
-            divise.append(contenu[debut:debut+a+1])
-            debut = debut + a + 1
-        elif (b > a and a == -1):
-            divise.append(contenu[debut:debut+b+1])
-            debut = debut + b + 1
-    if (len(contenu) > debut):
-        divise.append(contenu[debut:])
+    minimum = len(contenu)-1
+    while ((minimum >= debut) and (minimum<len(contenu))):
+        lettre = 0
+        for x in range(0, len(stop_chars)):
+            essai = contenu.find(stop_chars[x],debut)
+            if ((essai<minimum) and (essai>-1)):
+                minimum = essai
+                lettre = x
+        if (stop_chars[lettre]=='\n'):
+            divise.append(contenu[debut:minimum]+'<br>')
+        else:
+            divise.append(contenu[debut:minimum+1])
+        print(contenu[debut:minimum+1])
+        debut = minimum+1
+        minimum = len(contenu)-1
     return divise
+
