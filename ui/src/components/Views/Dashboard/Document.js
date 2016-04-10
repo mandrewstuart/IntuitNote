@@ -13,7 +13,7 @@ let Document = ({
         <div className="document-title">{ d.name || d.doc_name }</div>
 
         <button
-          style={{ margin: `0.7rem 0.7rem 0.7rem auto`, width: `9rem`, color: `rgb(50, 117, 232)` }}
+          className="autotag"
           onClick={ () => dispatch(autoTag({ id: d.doc_id })) }
         >
           AUTO TAG
@@ -23,7 +23,7 @@ let Document = ({
 
       <div>
         <div>
-          { d.sentences.map(s =>
+          { d.sentences.map((s, i) =>
             <span
               key={ s.id }
               onClick={ () => dispatch(tagSentence({ sentence: s })) }
@@ -33,7 +33,10 @@ let Document = ({
                 ${ suggestedTags.find(x => x.sentence_id === s.id) ? `has-suggestion` : ``}
               `}
             >
-              { s.value.includes(`<br>`) ? <br /> : s.value }
+              { s.value.includes(`<br>`)
+                ? (d.sentences[i - 2] || { value: `` }).value.includes(`<br>`) ? `` : <br /> 
+                : s.value
+              }
               {/*{ s.tag_value &&
                 <Tooltip show label={ s.tag_value } />
               }*/}

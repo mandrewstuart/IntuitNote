@@ -39,7 +39,7 @@ def getList(d, r = 0):
 #target = [[1,1,1],[7,8,9]]
 
 def proxit(d, t, labels):
-    avgDist = getAvgDist(d+t)/2
+    avgDist = getAvgDist(d+t)*2/3
     attribution = []
     for x in range(0, len(labels)):
         if (labels[x] != 'None'):

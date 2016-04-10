@@ -70,15 +70,17 @@ export let createTag = ({ id, value }) =>
 
 export let autoTag = ({ id }) =>
   async dispatch => {
-    let { suggestedTags } = await api({
+    let { suggestedTags, message } = await api({
       endpoint: `autoTag`,
       body: { id },
     })
 
-    dispatch({
-      type: AUTOTAG,
-      payload: { suggestedTags },
-    })
+    if (!message) {
+      dispatch({
+        type: AUTOTAG,
+        payload: { suggestedTags },
+      })
+    }
   }
 
 /*----------------------------------------------------------------------------*/

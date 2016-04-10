@@ -12,11 +12,19 @@ let Home = ({
   <div className="home">
     <Link className="logo" to="/">APPRENTICE DATA EXTRACTOR</Link>
     <p>
-      Bacon ipsum dolor amet tri-tip chicken t-bone tail. <br />
-      Doner kielbasa flank short ribs tri-tip, tongue tail filet mignon pork pork
-      belly shankle biltong pig. <br />
-      Meatball pork chop venison corned beef, alcatra chuck short ribs.
+      Project ADE is Software as a Service for people who extract data from texts.<br />
+      Not only can you tag and extract sentences with tags, we will also suggest new tags for you based on prior tags.
     </p>
+
+    <p>
+      Our Freemium model means you can try for free now, then pay only if you decide you like it.<br />
+      Sign up, create subjects, insert documents, tag sentences, and please let us know what you think.
+    </p>
+
+    <p>
+      Contact <a href="mailto:info@projectade.com">info@projectade.com</a> with comments, question, concerns, or queries.
+    </p>
+
     <div className="menu">
       {/* PUT BACK IN PROD
 
