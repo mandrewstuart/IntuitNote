@@ -22,7 +22,7 @@ let Document = ({
       </div>
 
       <div>
-        <div>
+        <div style={{ maxWidth: `45rem` }}>
           { d.sentences.map((s, i) =>
             <span
               key={ s.id }
@@ -34,7 +34,7 @@ let Document = ({
               `}
             >
               { s.value.includes(`<br>`)
-                ? (d.sentences[i - 2] || { value: `` }).value.includes(`<br>`) ? `` : <br /> 
+                ? (d.sentences[i - 2] || { value: `` }).value.includes(`<br>`) ? `` : <br />
                 : s.value
               }
               {/*{ s.tag_value &&
