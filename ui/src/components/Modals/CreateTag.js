@@ -12,7 +12,7 @@ let CreateTag = ({
 }) =>
   <div className={ `modal-content ${ sentenceBeingTagged.tag_value ? `editing` : `` }` }>
     <div className="modal-title">
-      { sentenceBeingTagged.tag_value ? `Edit Tag` : `Create Tag` }
+      { sentenceBeingTagged.tag_value ? `EDIT TAG` : `CREATE TAG` }
     </div>
 
     <div className="new-subject form">

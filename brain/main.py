@@ -293,8 +293,6 @@ def auto_tag():
 
     doc_id = request.json['id']
 
-    print('doc_id', doc_id)
-
     tag_count = cursor.execute("""SELECT
                 COUNT(*)
                 FROM  documents d
@@ -341,15 +339,17 @@ def auto_tag():
         suggestions = cusster[0]
         suggested = []
         for x in range(0,len(suggestions)):
-            if (suggestions[x]!='None'):
-                suggested.append([suggestions[x], clean_target[x][0]])
+            if (suggestions[x][1] != 'None'):
+                suggested.append({
+                    'sentence_id': target[0][1] + x,
+                    'tag_value': suggestions[x][1],
+                    'distance': suggestions[x][2]
+                })
 
     conn.commit()
     conn.close()
 
-    print('>>', suggested)
-
-    return { 'suggested': suggested }
+    return { 'suggestedTags': suggested }
 
 
 run(host="localhost", port=5000, reloader=True)

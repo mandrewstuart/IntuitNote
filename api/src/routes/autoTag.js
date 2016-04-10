@@ -28,7 +28,7 @@ export default ({ api }) =>
         //   })
         // })
 
-        res.json({ data })
+        res.json(data)
       })
       .catch(error => res.json({ error: error.message }))
   })

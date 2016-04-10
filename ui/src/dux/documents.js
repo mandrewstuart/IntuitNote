@@ -22,7 +22,7 @@ export let getDocument = ({ id, subjectId }) =>
       payload: { document, id },
     })
 
-    dispatch(push(`/dashboard/${subjectId}/${id}`))
+    dispatch(push(`/dashboard/subject/${subjectId}/document/${id}`))
   }
 
 export let createDocument = ({ title, author, text, publication, id }) =>
@@ -57,20 +57,27 @@ export let createTag = ({ id, value }) =>
       type: CREATE_TAG,
       payload: { tag_id },
     })
+
+    /*
+     *  TODO: get this information from the server
+     */
+
+    dispatch(getDocument({
+      id: location.pathname.split(`/`).pop(),
+      subjectId: location.pathname.split(`/`)[location.pathname.split(`/`).length - 3],
+    }))
   }
 
 export let autoTag = ({ id }) =>
   async dispatch => {
-    let data = await api({
+    let { suggestedTags } = await api({
       endpoint: `autoTag`,
       body: { id },
     })
 
-    console.log(data)
-
     dispatch({
       type: AUTOTAG,
-      payload: data,
+      payload: { suggestedTags },
     })
   }
 
@@ -78,7 +85,11 @@ export let autoTag = ({ id }) =>
 
 let intialState = {
   documents: [],
+  document: {
+    sentences: [],
+  },
   sentenceBeingTagged: {},
+  suggestedTags: [],
 }
 
 export default (state = intialState, action) => {
@@ -97,10 +108,7 @@ export default (state = intialState, action) => {
     case GET_DOCUMENT:
       return {
         ...state,
-        documents: [
-          ...state.documents.filter(d => d.id !== action.payload.id),
-          { ...action.payload.document, active: true },
-        ],
+        document: action.payload.document,
       }
 
     case GET_SUBJECT:
@@ -119,6 +127,12 @@ export default (state = intialState, action) => {
       return {
         ...state,
         sentenceBeingTagged: action.payload.sentence,
+      }
+
+    case AUTOTAG:
+      return {
+        ...state,
+        suggestedTags: action.payload.suggestedTags,
       }
 
     case DELETE_DOCUMENT:

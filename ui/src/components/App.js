@@ -7,18 +7,21 @@ import Dialog from 'material-ui/lib/dialog'
 
 export class App extends Component {
   componentDidMount = () => {
-    this.props.dispatch(getSubjects())
+    let { dispatch, params: { subject, document } } = this.props
 
-    if (this.props.params.document) {
-      this.props.dispatch(getDocument({
-        id: this.props.params.document,
-        subjectId: this.props.params.subject,
+    dispatch(getSubjects())
+
+    if (document) {
+      dispatch(getDocument({
+        id: document,
+        subjectId: subject,
       }))
     }
 
-    else if (this.props.params.subject) {
-      this.props.dispatch(getSubject({
-        id: this.props.params.subject,
+    if (subject) {
+      dispatch(getSubject({
+        id: subject,
+        redirect: !document,
       }))
     }
   }

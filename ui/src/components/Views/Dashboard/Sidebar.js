@@ -27,7 +27,7 @@ let Sidebar = ({
         <div
           key={ s.id }
           className={ `subject-nav-item ${s.active ? `active` : ``}` }
-          onClick={ () => dispatch(getSubject({ id: s.id })) }
+          onClick={ () => dispatch(getSubject({ id: s.id, redirect: true })) }
         >
           <a className="new-subject">{ s.name }</a>
           <i className="fa fa-file" />

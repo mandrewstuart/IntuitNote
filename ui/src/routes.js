@@ -37,9 +37,9 @@ export default
       <Route component={ App }>
         <Route path="/" component={ Home } />
         <Route path="/dashboard" component={ Dashboard } onEnter={ requireAuth }>
-          <Route path=":subject" component={ Subject }>
+          <Route path="subject/:subject" component={ Subject }>
             <IndexRoute component={ DocumentsList } />
-            <Route path=":document" component={ Document } />
+            <Route path="document/:document" component={ Document } />
           </Route>
         </Route>
       </Route>

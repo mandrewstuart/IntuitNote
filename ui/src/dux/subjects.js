@@ -22,7 +22,7 @@ export let getSubjects = () =>
     }
   }
 
-export let getSubject = ({ id }) =>
+export let getSubject = ({ id, redirect }) =>
   async dispatch => {
     let { documents } = await api({
       endpoint: `getSubject`,
@@ -34,7 +34,7 @@ export let getSubject = ({ id }) =>
       payload: { id, documents },
     })
 
-    dispatch(push(`/dashboard/${id}`))
+    if (redirect) dispatch(push(`/dashboard/subject/${id}`))
   }
 
 export let createSubject = ({ name }) =>
