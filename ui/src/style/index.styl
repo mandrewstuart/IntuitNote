@@ -14,31 +14,57 @@ html, body, #root, #app, .dashboard
   height 100%
   margin 0
   font-family 'Roboto', sans-serif
-  background-color: rgb(236, 235, 235);
-
-form
-  margin 0
-a
-  color black
-  text-decoration none
-  cursor pointer
+  background-color #2C9A2F
+  color white
 
 *
   box-sizing border-box !important
+
+form
+  margin 0
+
+a
+  color white
+  text-decoration none
+  cursor pointer
+
+p
+  font-weight 100
+  font-size 1.3rem
+
+input
+  color rgb(65, 65, 65)
+
+input:focus
+  border-bottom: 1px solid rgb(32, 152, 40) !important
+  box-shadow: 0 1px 0 0 rgb(32, 152, 40) !important
+
+.home
+  height 100%
+  padding 5rem
+  display flex
+  flex-direction column
+
+  .login-link
+    display flex
+    align-items center
+
+    .fa-user
+      padding-right 0.5rem
+
+  .fa-file-archive-o
+    font-size 6rem
+    align-self flex-end
+    margin-top auto
 
 .header
   height 5rem
   display flex
   align-items center
 
-.header a
-  color primary
-
 .logo
-  padding 0 5rem
-  font-size 2rem
   font-family 'Dosis', sans-serif
-  font-size 1.3rem
+  font-size 2rem
   font-weight 600
   letter-spacing 1px
 
@@ -47,14 +73,10 @@ a
   font-weight: 500
   padding: 1rem
 
-.menu
-  margin-left auto
-  padding 0 5rem
-
 .menu a
   font-size: 1.2rem
-  font-weight: 300
-  padding: 1rem
+  font-family 'Dosis', sans-serif
+  padding-bottom 0.5rem
 
 .form
   display flex
@@ -98,13 +120,6 @@ a
 
 .dashboard
   display flex
-
-.sidebar
-  height 100%
-  width 20rem
-  background-color rgb(48, 71, 58)
-  color rgb(202, 230, 225)
-  padding 2rem 0
 
 .main-area
   width calc(100vw - 20rem)

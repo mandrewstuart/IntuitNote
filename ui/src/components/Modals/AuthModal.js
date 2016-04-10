@@ -23,7 +23,7 @@ let AuthModal = ({
             }
           }
         >
-          Log In
+          LOGIN
         </button>
         <button className="register-btn"
           onClick={
@@ -32,7 +32,7 @@ let AuthModal = ({
             }
           }
         >
-          Register
+          SIGN UP
         </button>
       </div>
       <div className="error">{ message }</div>

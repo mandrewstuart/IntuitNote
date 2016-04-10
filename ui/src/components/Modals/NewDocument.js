@@ -14,22 +14,23 @@ let NewDocument = ({
 }) =>
   <div className="modal-content new-document">
     <div className="close-btn" onClick={ () => dispatch(toggleModal()) }>CLOSE ✕</div>
-    <div className="modal-title">Add A Document</div>
+    <div className="modal-title">ADD DOCUMENT</div>
     <div className="subject-data">
       {/*<div className="paste-text-info">
         <button>Enter text manually</button>
       </div>*/}
 
-      <input ref={ node => title = node } type="text" placeholder="Title.." />
       <label>Title</label>
+      <input ref={ node => title = node } type="text" placeholder="eg 'Machine Learning'" />
 
-      <input ref={ node => author = node } type="text" placeholder="Author.. (optional)" />
-      <label>Author</label>
+      <label>Author (optional)</label>
+      <input ref={ node => author = node } type="text" placeholder="eg 'Michael Irwin Jordan'" />
 
-      <input ref={ node => publication = node } type="text" placeholder="Publication.. (optional)" />
-      <label>Publication</label>
+      <label>Publication (optional)</label>
+      <input ref={ node => publication = node } type="text" placeholder="eg 'Journal of Machine Learning Research'" />
 
-      <div style={{ marginTop: `1rem` }}>
+      <label>Text</label>
+      <div style={{ margin: `1rem 0` }}>
         <textarea
           ref = { node => text = node }
           placeholder="Paste text here.."
@@ -57,7 +58,7 @@ let NewDocument = ({
             }))
           }
         >
-          Add Document
+          ADD <i className="fa fa-plus" />
         </button>
       </div>
     </div>

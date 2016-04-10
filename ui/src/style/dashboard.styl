@@ -1,11 +1,20 @@
+.main-area
+  background white
+  color rgb(65, 65, 65)
+
+  a
+    color rgb(55, 55, 55)
+
 .subject-area
   height calc(100vh - 4rem)
   padding 2rem
   overflow scroll
 
 .subject-name
-  font-size 2rem
+  font-size 1.6rem
   display flex
+  font-family 'Dosis', sans-serif
+  font-weight bold
 
   input
     font-size 2rem
@@ -24,16 +33,19 @@
 .name-row
   display flex
   align-items center
+  color #484848
 
   .subject-toolbar
     display flex
     margin-left auto
 
     button
-      margin 1rem
+      margin 0.7rem
+      font-size 0.9rem
+      padding 0.5rem
 
   .delete-btn
-    width 10rem
+    width 6rem
     color rgb(189, 46, 14)
 
     &:hover
@@ -51,3 +63,6 @@
   align-items center
   justify-content center
   font-size 2rem
+
+.documents-list
+  margin-top: 2rem

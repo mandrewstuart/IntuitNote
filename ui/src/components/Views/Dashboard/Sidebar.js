@@ -8,8 +8,8 @@ let Sidebar = ({
   subjects,
   dispatch,
 }) =>
-  <div className="sidebar">
-    <div className="logo center">ADE</div>
+  <div className="sidebar z-depth-2">
+    <div className="logo center">APPRENTICE DATA EXTRACTOR</div>
     <div className="greeting">
       <div className="welcome">Welcome</div>
       <i className="fa fa-user" />

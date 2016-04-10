@@ -9,15 +9,15 @@ let Confirm = ({
   dispatch,
 }) =>
   <div className="confirm modal-content">
-    <div className="modal-title">Delete Subject</div>
+    <div className="modal-title">DELETE SUBJECT?</div>
     <div className="new-subject form">
       <div className="button-row">
         <button className="delete" onClick={ () =>
           dispatch(deleteSubject({ id: subjects.find(s => s.active).id }))
         }>
-          YES DELETE
+          YES, DELETE
         </button>
-        <button onClick={ () => dispatch(toggleModal()) }>CANCEL</button>
+        <button onClick={ () => dispatch(toggleModal()) }>NO, CANCEL</button>
       </div>
       <div className="error">{ message }</div>
     </div>

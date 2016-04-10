@@ -7,7 +7,7 @@ let DocumentsList = ({
   dispatch,
   documents,
 }) =>
-  <div>
+  <div className="documents-list">
     <div className="table-header">
       <div style={{ flex: 8 }}>Title</div>
       <div>Delete</div>
@@ -19,7 +19,7 @@ let DocumentsList = ({
         <div key={ d.id || d.doc_id } className="table-row">
           <a
             style={{ flex: 8 }}
-            onClick={ () => dispatch(getDocument({ id: d.id })) }
+            onClick={ () => dispatch(getDocument({ id: d.id, subjectId: location.pathname.split(`/`).pop() })) }
           >
             {/* TODO: unify document name -> title */}
             { d.name || d.doc_name }

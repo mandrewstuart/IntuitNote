@@ -5,12 +5,16 @@
   background transparent !important
   box-shadow initial !important
 
+.modal-title
+  font-family 'Dosis', sans-serif
+
 .modal-content
   background white
   padding 2rem 3rem 1rem
-  border 14px solid rgb(28, 204, 145)
+  border 14px solid rgb(28, 204, 61)
   border-radius 8px
   position relative
+  color rgb(61, 61, 61)
 
   &.editing
     border 14px solid rgb(195, 164, 33)
@@ -32,7 +36,10 @@
 
   &.new-document
     width 35rem
-    height 35rem
+
+    textarea
+      height 5rem
+      padding 0.5rem
 
   &.confirm
     width 26rem
@@ -59,6 +66,7 @@
   top 10px
   right 10px
   cursor pointer
+  color rgb(78, 78, 78)
 
 .close-btn:hover
   color rgb(201, 53, 53)

@@ -1,6 +1,13 @@
 .sidebar
+  height 100%
+  width 20rem
+  background-color #1B631F
+  color rgb(202, 230, 225)
+  padding 2rem 0
+  z-index 1
+
   .logo
-    font-size 2rem
+    font-size 1rem
     padding 1rem 0 2rem
 
 .start-message
@@ -29,17 +36,17 @@
 .subject-nav-item
   color rgb(202, 230, 225)
   padding 0.6rem 0 0.6rem 1.5rem
-  background-color rgb(59, 85, 71)
+  background-color #27732C
   display flex
   align-items center
   transition all 0.25s ease
   cursor pointer
 
   &.active
-    background-color #467170
+    background-color #529434
 
 .subject-nav-item + .subject-nav-item
-  border-top 4px solid #30473a
+  border-top 4px solid #1B631F
 
 .subject-nav-item a
   color rgb(202, 230, 225)
@@ -49,4 +56,5 @@
   padding-right 1rem
 
 .subject-nav-item:not(.active):hover
-  background-color rgb(61, 103, 81)
+  background-color rgb(77, 152, 81)
+  cursor pointer

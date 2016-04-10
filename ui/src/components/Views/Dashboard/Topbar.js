@@ -12,13 +12,13 @@ let Topbar = ({
     >
       Sign Out
     </a>
-    <a className="account-settings hvr-underline-from-right">Account Settings</a>
-    <span className="plan-message">
+    {/*<a className="account-settings hvr-underline-from-right">Account Settings</a>*/}
+    {/*<span className="plan-message">
       <i className="fa fa-warning" />
       You are currently on the free plan.
       Go to your account settings and upgrade to
       <span className="underline">add more subjects!</span>
-    </span>
+    </span>*/}
   </div>
 
 export default connect()(Topbar)

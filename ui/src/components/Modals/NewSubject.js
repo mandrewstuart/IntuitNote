@@ -11,7 +11,7 @@ let NewSubject = ({
 }) =>
   <div className="new-subject modal-content">
     <div className="close-btn" onClick={ () => dispatch(toggleModal()) }>CLOSE ✕</div>
-    <div className="modal-title">Create New Subject</div>
+    <div className="modal-title">NEW SUBJECT</div>
     <div className="new-subject form">
       <input ref={ node => name = node } placeholder="Name.." />
       <div className="button-row">

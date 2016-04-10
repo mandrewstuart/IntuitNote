@@ -1,3 +1,4 @@
+import { push } from 'react-router-redux'
 import api from 'utils/api'
 
 import { GET_SUBJECT, CREATE_SUBJECT } from 'dux/subjects'
@@ -9,7 +10,7 @@ export let TAG_SENTENCE = `TAG_SENTENCE`
 export let CREATE_TAG = `CREATE_TAG`
 export let AUTOTAG = `AUTOTAG`
 
-export let getDocument = ({ id }) =>
+export let getDocument = ({ id, subjectId }) =>
   async dispatch => {
     let { document } = await api({
       endpoint: `getDocument`,
@@ -20,6 +21,8 @@ export let getDocument = ({ id }) =>
       type: GET_DOCUMENT,
       payload: { document, id },
     })
+
+    dispatch(push(`/dashboard/${subjectId}/${id}`))
   }
 
 export let createDocument = ({ title, author, text, publication, id }) =>
@@ -64,7 +67,7 @@ export let autoTag = ({ id }) =>
     })
 
     console.log(data)
-    
+
     dispatch({
       type: AUTOTAG,
       payload: data,

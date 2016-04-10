@@ -9,29 +9,43 @@ let Home = ({
   user,
   dispatch,
 }) =>
-  <div>
-    <div className="header">
-      <Link className="logo" to="/">Apprentice Data Extractor</Link>
+  <div className="home">
+    <Link className="logo" to="/">APPRENTICE DATA EXTRACTOR</Link>
+    <p>
+      Bacon ipsum dolor amet tri-tip chicken t-bone tail. <br />
+      Doner kielbasa flank short ribs tri-tip, tongue tail filet mignon pork pork
+      belly shankle biltong pig. <br />
+      Meatball pork chop venison corned beef, alcatra chuck short ribs.
+    </p>
+    <div className="menu">
+      {/* PUT BACK IN PROD
 
-      <div className="menu">
         <a className="hvr-underline-from-right">About</a>
-        <a className="hvr-underline-from-right">Pricing</a>
-        { loggedIn ||
+      <a className="hvr-underline-from-right">Pricing</a>*/}
+      { loggedIn ||
+        <div className="login-link">
           <a
             className="hvr-underline-from-left"
             onClick={ () => dispatch(toggleModal(`AuthModal`)) }
           >
-            Login / Register
+            <i className="fa fa-user" />
+            LOGIN / SIGN UP
           </a>
-        }
-        { loggedIn &&
-          <div>
-            <span>Welcome, { user.email }</span>
-            <a onClick={ () => dispatch(logout()) }>Log out</a>
-          </div>
-        }
-      </div>
+        </div>
+      }
+      { loggedIn &&
+        <div className="login-link">
+          <a
+            className="hvr-underline-from-left"
+            onClick={ () => dispatch(logout()) }
+          >
+            <i className="fa fa-user" />
+            GO TO DASHBOARD
+          </a>
+        </div>
+      }
     </div>
+    <i className="fa fa-file-archive-o" />
   </div>
 
 export default connect(

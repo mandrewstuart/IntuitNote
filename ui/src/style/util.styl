@@ -1,2 +1,13 @@
 .center
   text-align center
+
+.z-depth-2
+  box-shadow: 0 8px 17px 0 rgba(0,0,0,0.4),0 6px 20px 0 rgba(0,0,0,0.4)
+
+label,
+input:not([type]):focus:not([readonly])+label,
+input[type=text]:focus:not([readonly])+label,
+input[type=password]:focus:not([readonly])+label,
+input[type=email]:focus:not([readonly])+label,
+textarea.materialize-textarea:focus:not([readonly])+label
+  color rgb(60, 60, 60)

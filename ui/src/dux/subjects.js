@@ -1,3 +1,4 @@
+import { push } from 'react-router-redux'
 import api from 'utils/api'
 import auth from '../auth'
 
@@ -32,6 +33,8 @@ export let getSubject = ({ id }) =>
       type: GET_SUBJECT,
       payload: { id, documents },
     })
+
+    dispatch(push(`/dashboard/${id}`))
   }
 
 export let createSubject = ({ name }) =>
