@@ -12,7 +12,7 @@ subj_modified_date date
 db.execute("""CREATE TABLE documents (
 doc_ID integer primary key,
 doc_subj_ID integer,
-doc_title text,
+doc_name text,
 doc_author text,
 doc_publication text,
 doc_date date,
