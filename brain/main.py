@@ -215,7 +215,7 @@ def show_document():
             'doc_id': doc_id,
             'sentences': [
                 {
-                    'value': x[0],
+                    'value': html.unescape(x[0]),
                     'id': x[1],
                     'tag_value': x[2],
                     'tag_id': x[3]
