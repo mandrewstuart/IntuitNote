@@ -60,6 +60,8 @@ export let createSubject = ({ name }) =>
         },
       },
     })
+
+    dispatch(push(`/dashboard/subject/${id}`))
   }
 
 export let deleteSubject = ({ id }) =>
