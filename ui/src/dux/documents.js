@@ -28,7 +28,7 @@ export let getDocument = ({ id, subjectId }) =>
 export let createDocument = ({ title, author, text, publication, id }) =>
   async dispatch => {
 
-    let { document_ID } = await api({
+    let { id: doc_id } = await api({
       endpoint: `createDocument`,
       body: { title, author, text, publication, id },
     })
@@ -36,7 +36,7 @@ export let createDocument = ({ title, author, text, publication, id }) =>
     dispatch({
       type: CREATE_DOCUMENT,
       payload: {
-        document: { name: title, author, text, publication, id: document_ID },
+        document: { name: title, author, text, publication, id: doc_id },
       },
     })
   }

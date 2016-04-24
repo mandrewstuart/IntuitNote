@@ -1,4 +1,4 @@
-import { LOGIN_FAIL } from 'dux/auth'
+import { LOGIN_FAIL, LOGIN_SUCCESS } from 'dux/auth'
 import { INVALID_SUBJECT } from 'dux/subjects'
 
 /*----------------------------------------------------------------------------*/
@@ -19,6 +19,12 @@ export default (state = intialState, action) => {
       return {
         ...state,
         message: `Please name your subject!`,
+      }
+
+    case LOGIN_SUCCESS:
+      return {
+        ...state,
+        message: ``,
       }
 
     default:
