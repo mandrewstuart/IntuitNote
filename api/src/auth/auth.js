@@ -1,10 +1,18 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
 
+import crypto from 'crypto'
+
 export default ({
   api,
   app,
 }) => {
+  let hashPassword = password =>
+    crypto
+      .createHmac(`sha256`, app.get(`superSecret`))
+      .update(password)
+      .digest(`hex`)
+  
   app.post(`/signup`, (req, res) => {
 
     let { email, password } = req.body
@@ -18,11 +26,7 @@ export default ({
         })
         else {
 
-          /*
-           *  TODO: hash password
-           */
-
-          let user = new User({ email, password, plan: `free` })
+          let user = new User({ email, password: hashPassword(password), plan: `free` })
 
           user.save((err, user) => {
             if (err) throw err
@@ -49,7 +53,7 @@ export default ({
       } else if (user) {
 
         // check if password matches
-        if (user.password !== password) {
+        if (user.password !== hashPassword(password)) {
           res.json({ success: false, message: 'Wrong password.' })
         } else {
 
