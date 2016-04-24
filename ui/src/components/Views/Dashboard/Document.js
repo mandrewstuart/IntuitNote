@@ -1,11 +1,15 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import Tooltip from 'material-ui/lib/tooltip'
 import { tagSentence, autoTag } from 'dux/documents'
+import { togglePopover } from 'dux/popover'
 
 let Document = ({
   document: d,
   suggestedTags,
   dispatch,
+  popoverId,
+  popoverContent,
 }) =>
   <div>
     <div key={ d.id || d.doc_id }>
@@ -25,8 +29,20 @@ let Document = ({
         <div style={{ maxWidth: `45rem` }}>
           { d.sentences.map((s, i) =>
             <span
+              style={{ position: `relative` }}
               key={ s.id }
               onClick={ () => dispatch(tagSentence({ sentence: s })) }
+              onMouseOver={
+                () => {
+                  if (s.tag_value) {
+                    dispatch(togglePopover({
+                      popoverContent: s.tag_value,
+                      popoverId: s.id,
+                    }))
+                  }
+                }
+              }
+              onMouseOut={ () => dispatch(togglePopover()) }
               className={ `
                 sentence
                 ${ s.tag_value ? `tagged` : `` }
@@ -37,9 +53,16 @@ let Document = ({
                 ? (d.sentences[i - 2] || { value: `` }).value.includes(`<br>`) ? `` : <br />
                 : s.value
               }
-              {/*{ s.tag_value &&
-                <Tooltip show label={ s.tag_value } />
-              }*/}
+
+              { popoverId === s.id &&
+                <Tooltip
+                  show={ popoverId !== null }
+                  label={ popoverContent }
+                  horizontalPosition="left"
+                  verticalPosition="top"
+                  touch
+                />
+              }
             </span>
           )}
         </div>
@@ -50,5 +73,6 @@ let Document = ({
 export default connect(
   state => ({
     ...state.documents,
+    ...state.popover,
   })
 )(Document)

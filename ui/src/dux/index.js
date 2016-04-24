@@ -3,6 +3,7 @@ import modal from './modal'
 import subjects from './subjects'
 import documents from './documents'
 import message from './message'
+import popover from './popover'
 
 export default {
   auth,
@@ -10,4 +11,5 @@ export default {
   subjects,
   message,
   documents,
+  popover,
 }
