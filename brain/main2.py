@@ -1,5 +1,6 @@
 from bottle import response, redirect, route, run, template, get, post, request, error, SimpleTemplate
-import os, sqlite3, html, custom_classify, vectorizer, parse_doc
+import os, sqlite3, html, parse_doc
+import dictionize, dictClassify
 
 response.content_type = 'application/json'
 
@@ -279,17 +280,14 @@ def review(subj_ID):
 def auto_tag():
     #check if there are any tags in that subject yet
     cursor, conn = connect_to_db()
-
     doc_id = request.json['id']
-
     tag_count = cursor.execute("""SELECT
                 COUNT(*)
                 FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
-                                    WHERE doc_ID = """ + str(doc_id) + ") AND doc_ID <> " + str(doc_id)).fetchall()[0][0]
-
+                                    WHERE doc_ID = """ + str(doc_id) + ")").fetchall()[0][0]
     #inform the user if they still need to tag something already
     if (tag_count == 0):
         return {
@@ -305,44 +303,25 @@ def auto_tag():
                         WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
                                             WHERE doc_ID = """ + str(doc_id) + """)
                         AND doc_ID <> """ + str(doc_id) + ") ORDER BY sent_ID").fetchall()
-        output = []
-        test_output = []
+        training_data = []
         for x in data:
-            test_output.append([ html.unescape(x[0]) , x[1] ])
-        #import dictionize
-        #print(dictionize.dictionize(test_output))
-        for x in data:
-            output.append([html.unescape(x[0])])
+            training_data.append([ html.unescape(x[0]) , x[2], x[1] ])
         #machine learning
-        target = cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID').fetchall()
-        clean_target = []
+        target = cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE sent_value <> "<br>" AND length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID').fetchall()
+        test_data = []
         for x in target:
-            clean_target.append([html.unescape(x[0])])
-        Z = []
-        for x in target:
-            Z.append([x[0]])
-        A = output + Z
-        A = vectorizer.vectorize(A)
-        Y = []
-        for x in data:
-            Y.append( x[1] if (x[1]!= None) else 'None' )
-        X = A[:len(output)]
-        Z = A[len(output):]
-        cusster = custom_classify.proxit(X, Z, Y)
-        suggestions = cusster[0]
-        suggested = []
-        for x in range(0,len(suggestions)):
-            if (suggestions[x][1] != 'None'):
-                suggested.append({
-                    'sentence_id': target[0][1] + x,
-                    'tag_value': suggestions[x][1],
-                    'distance': suggestions[x][2]
-                })
-
+            test_data.append([html.unescape(x[0]), x[1]])
+        X = dictionize.dictionize(training_data, 1)
+        Y = dictionize.dictionize(test_data)
+        X_plus_Y = {}
+        X_plus_Y.update(X['tf'])
+        X_plus_Y.update(Y['tf'])
+        idf = dictionize.idfize(X_plus_Y)
+        threshold = dictClassify.getAvgDist(X_plus_Y, idf)*3/4
+        suggestions = dictClassify.distProxit(threshold, X['labels'], Y['tf'], idf)
     conn.commit()
     conn.close()
-    print(suggested)
-    return { 'suggestedTags': suggested }
+    return { 'suggestedTags': suggestions }
 
 
 run(host="localhost", port=5000, reloader=True)

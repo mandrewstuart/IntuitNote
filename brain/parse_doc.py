@@ -14,8 +14,6 @@ def parse_sentences(contenu):
             divise.append(contenu[debut:minimum]+'<br>')
         else:
             divise.append(contenu[debut:minimum+1])
-        print(contenu[debut:minimum+1])
         debut = minimum+1
         minimum = len(contenu)-1
     return divise
-
