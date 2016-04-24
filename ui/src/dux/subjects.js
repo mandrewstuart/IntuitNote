@@ -10,6 +10,7 @@ export let CREATE_SUBJECT = `CREATE_SUBJECT`
 export let INVALID_SUBJECT = `INVALID_SUBJECT`
 export let DELETE_SUBJECT = `DELETE_SUBJECT`
 export let TOGGLE_SUBJECT_EDITING = `TOGGLE_SUBJECT_EDITING`
+export let SUBJECT_NOT_FOUND = `SUBJECT_NOT_FOUND`
 
 export let getSubjects = () =>
   async dispatch => {
@@ -29,12 +30,19 @@ export let getSubject = ({ id, redirect }) =>
       body: { id },
     })
 
-    dispatch({
-      type: GET_SUBJECT,
-      payload: { id, documents },
-    })
+    if (documents) {
+      dispatch({
+        type: GET_SUBJECT,
+        payload: { id, documents },
+      })
 
-    if (redirect) dispatch(push(`/dashboard/subject/${id}`))
+      if (redirect) dispatch(push(`/dashboard/subject/${id}`))
+    }
+
+    else dispatch({
+      type: SUBJECT_NOT_FOUND,
+      payload: { message: `No subject found!` },
+    })
   }
 
 export let createSubject = ({ name }) =>

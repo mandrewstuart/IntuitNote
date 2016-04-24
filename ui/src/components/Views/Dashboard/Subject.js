@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router'
 import { toggleModal } from 'dux/modal'
 
 let name = { value: `` }
@@ -17,7 +18,7 @@ let Subject = ({
           <div className="subject-name">
             { editingSubject
               ? <input ref={ node => name = node } autoFocus type="text" defaultValue={ s.name } />
-              : s.name
+              : <Link to={ `/dashboard/subject/${s.id}` }>{ s.name }</Link>
             }
           </div>
 

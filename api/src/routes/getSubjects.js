@@ -5,6 +5,9 @@ export default ({ api }) =>
     let { userEmail } = req.body
     User.findOne({ email: userEmail }, (err, user) => {
       if (err) throw err
-      res.json({ subjects: user.subjects })
+      if (user)
+        res.json({ subjects: user.subjects })
+      else
+        res.json({ message: `No user found` })
     })
   })

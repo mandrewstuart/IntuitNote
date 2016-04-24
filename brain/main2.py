@@ -124,7 +124,7 @@ def show_subject():
 
 @post('/deleteDocument')
 def delete_document():
-    id = str(int(request.json['id']))
+    id = request.json['id']
     cursor, conn = connect_to_db()
     cursor.execute('DELETE FROM documents WHERE doc_ID = {}'.format(id))
     conn.commit()

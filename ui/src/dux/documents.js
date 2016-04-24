@@ -6,6 +6,7 @@ import { GET_SUBJECT, CREATE_SUBJECT } from 'dux/subjects'
 export let GET_DOCUMENT = `GET_DOCUMENT`
 export let CREATE_DOCUMENT = `CREATE_DOCUMENT`
 export let DELETE_DOCUMENT = `DELETE_DOCUMENT`
+export let EDIT_DOCUMENT = `EDIT_DOCUMENT`
 export let TAG_SENTENCE = `TAG_SENTENCE`
 export let CREATE_TAG = `CREATE_TAG`
 export let AUTOTAG = `AUTOTAG`
@@ -38,6 +39,21 @@ export let createDocument = ({ title, author, text, publication, id }) =>
       payload: {
         document: { name: title, author, text, publication, id: doc_id },
       },
+    })
+  }
+
+export let editDocument = document => ({ type: EDIT_DOCUMENT, payload: document })
+
+export let deleteDocument = ({ docId, subjId }) =>
+  async dispatch => {
+    await api({
+      endpoint: `deleteDocument`,
+      body: { docId, subjId },
+    })
+
+    dispatch({
+      type: DELETE_DOCUMENT,
+      payload: { docId },
     })
   }
 
@@ -92,6 +108,7 @@ let intialState = {
   },
   sentenceBeingTagged: {},
   suggestedTags: [],
+  documentBeingEdited: {},
 }
 
 export default (state = intialState, action) => {
@@ -138,6 +155,17 @@ export default (state = intialState, action) => {
       }
 
     case DELETE_DOCUMENT:
+      return {
+        ...state,
+        documents: state.documents.filter(x => x.id !== action.payload.docId),
+      }
+
+    case EDIT_DOCUMENT:
+      return {
+        ...state,
+        documentBeingEdited: action.payload.document,
+      }
+
     default:
       return state
   }

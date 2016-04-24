@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { toggleModal } from 'dux/modal'
-import { getDocument } from 'dux/documents'
+import { getDocument, editDocument } from 'dux/documents'
 
 let DocumentsList = ({
   dispatch,
@@ -27,7 +27,12 @@ let DocumentsList = ({
 
           <a
             style={{ color: `rgb(147, 31, 11)` }}
-            onClick={ () => dispatch(toggleModal(`Confirm`)) }
+            onClick={
+              () => {
+                dispatch(editDocument({ document: d }))
+                dispatch(toggleModal(`ConfirmDocument`))
+              }
+            }
           >
             <i className="fa fa-trash-o" />
           </a>

@@ -1,17 +1,7 @@
 import express from 'express'
 import { auth } from './auth'
 
-import {
-  getSubjects,
-  createSubject,
-  getSubject,
-  deleteSubject,
-  updateSubject,
-  createDocument,
-  getDocument,
-  createTag,
-  autoTag,
-} from './routes'
+import * as routes from './routes'
 
 
 export default ({ app }) => {
@@ -19,15 +9,8 @@ export default ({ app }) => {
   let api = express.Router()
 
   auth({ app, api })
-  getSubjects({ api })
-  createSubject({ api })
-  getSubject({ api })
-  deleteSubject({ api })
-  updateSubject({ api })
-  createDocument({ api })
-  getDocument({ api })
-  createTag({ api })
-  autoTag({ api })
+
+  Object.keys(routes).forEach(key => routes[key]({ api }))
 
   return api
 }

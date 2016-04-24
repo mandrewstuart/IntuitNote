@@ -1,15 +1,17 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import Sidebar from './Sidebar'
 
 let Dashboard = ({
   children,
+  message,
 }) =>
   <div className="app dashboard">
     <Sidebar />
 
     <div className="main-area">
-      { children }
+      { message === `No subject found!` ? message : children }
     </div>
   </div>
 
-export default Dashboard
+export default connect(state => state.message)(Dashboard)
