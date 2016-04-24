@@ -12,7 +12,9 @@ export default ({
       .createHmac(`sha256`, app.get(`superSecret`))
       .update(password)
       .digest(`hex`)
-  
+
+  let doubleHash = password => hashPassword(hashPassword(password))
+
   app.post(`/signup`, (req, res) => {
 
     let { email, password } = req.body
@@ -26,7 +28,7 @@ export default ({
         })
         else {
 
-          let user = new User({ email, password: hashPassword(password), plan: `free` })
+          let user = new User({ email, password: doubleHash(password), plan: `free` })
 
           user.save((err, user) => {
             if (err) throw err
@@ -53,7 +55,7 @@ export default ({
       } else if (user) {
 
         // check if password matches
-        if (user.password !== hashPassword(password)) {
+        if (user.password !== doubleHash(password)) {
           res.json({ success: false, message: 'Wrong password.' })
         } else {
 
