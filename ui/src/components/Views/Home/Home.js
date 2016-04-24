@@ -43,13 +43,13 @@ let Home = ({
       }
       { loggedIn &&
         <div className="login-link">
-          <a
+          <Link
             className="hvr-underline-from-left"
-            onClick={ () => dispatch(logout()) }
+            to="/dashboard"
           >
             <i className="fa fa-user" />
             GO TO DASHBOARD
-          </a>
+          </Link>
         </div>
       }
     </div>
