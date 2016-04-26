@@ -5,6 +5,7 @@
  - Node 4^
  - MongoDB
  - Python 3
+ - MySQL
 
 ## Installation
 
