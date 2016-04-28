@@ -21,14 +21,13 @@ def subject_create():
     name = request.json['name']
     cursor, conn = connect_to_db()
     cursor.execute("INSERT INTO subjects (subj_name) VALUES ('{}')".format(name))
-
     cursor.execute(
         """
         SELECT subj_ID FROM subjects WHERE subj_name = '{}';
         """.format(name))
     id = cursor.fetchall()[0][0]
-
     conn.commit()
+    print({ 'id': id })
     return { 'id': id }
 
 
@@ -204,39 +203,53 @@ def tag():
     return { 'tag_id': int(tag_id) }
 
 
-@post('/reviewTags/<subj_ID>')
-def review(subj_ID):
-    tagsData = {}
+@post('/reviewTags')
+def review():
     subj_id = int(request.json.get('subj_id'))
-    tagsData['subj_id'] = subj_id
     cursor, conn = connect_to_db()
-    cursor.execute("SELECT subj_name FROM subjects WHERE subj_ID = " + subj_id)
+    cursor.execute("SELECT subj_name FROM subjects WHERE subj_ID = " + str(subj_id))
     subj_name = cursor.fetchall()[0][0]
-    tagsData['subj_name'] = subj_name
+    output = {'subject_name': subj_name}
+    output['subectj_id'] = subj_id
     cursor.execute("""SELECT
                 d.doc_name
                 , d.doc_ID
+                , se.sent_id
                 , se.sent_value
                 , t.tag_value
                 , t.tag_ID
                 FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
-                WHERE doc_subj_ID = """ + str(subj_ID) + " ORDER BY se.sent_ID ASC")
+                WHERE doc_subj_ID = """ + str(subj_id) + " ORDER BY se.sent_ID ASC")
     data = cursor.fetchall()
     doc_id = -1
     documents = []
     for row in data:
-        if (int(row[1])!=doc_id):
-            if (doc_id != -1):
-                documents.append(docData)
+        if (-1==doc_id):
             docData = {}
+            doc_id = int(row[1])
+            docData['document_id'] = doc_id
             docData['document_name'] = row[0]
-            docData['document_id'] = int(row[1])
-    cursor.execute("SELECT subj_name FROM subjects WHERE subj_ID = " + str(subj_ID))
-    sujet = cursor.fetchall()[0][0]
-    return template('tags_review', nom = sujet, rows = data)
-
+            sentences = []
+        elif (int(row[1])!=doc_id):
+            docData['sentences'] = sentences
+            documents.append(docData)
+            sentences = []
+            doc_id = int(row[1])
+            docData = {}
+            docData['document_id'] = doc_id
+            docData['document_name'] = row[0]
+        sentence = {}
+        sentence['sentence_value'] = row[3]
+        sentence['sentence_id'] = int(row[2])
+        sentence['tag_value'] = row[4]
+        sentence['tag_id'] = int(row[5])
+        sentences.append(sentence)
+    docData['sentences'] = sentences
+    documents.append(docData)
+    output['documents']= documents
+    return output
 
 
 @post('/deleteTag')
