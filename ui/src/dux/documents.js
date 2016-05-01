@@ -10,6 +10,7 @@ export let EDIT_DOCUMENT = `EDIT_DOCUMENT`
 export let TAG_SENTENCE = `TAG_SENTENCE`
 export let CREATE_TAG = `CREATE_TAG`
 export let AUTOTAG = `AUTOTAG`
+export let DISCARD_SUGGESTION = `DISCARD_SUGGESTION`
 
 export let getDocument = ({ id, subjectId }) =>
   async dispatch => {
@@ -99,6 +100,9 @@ export let autoTag = ({ id }) =>
     }
   }
 
+export let discardSuggestion = ({ suggestion }) =>
+  ({ type: DISCARD_SUGGESTION, payload: suggestion })
+
 /*----------------------------------------------------------------------------*/
 
 let intialState = {
@@ -164,6 +168,12 @@ export default (state = intialState, action) => {
       return {
         ...state,
         documentBeingEdited: action.payload.document,
+      }
+
+    case DISCARD_SUGGESTION:
+      return {
+        ...state,
+        suggestedTags: state.suggestedTags.filter(x => x.sentence_id !== action.payload.sentence_id),
       }
 
     default:

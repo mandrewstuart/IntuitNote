@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Tooltip from 'material-ui/lib/tooltip'
-import { tagSentence, autoTag } from 'dux/documents'
+import { tagSentence, autoTag, discardSuggestion, createTag } from 'dux/documents'
 import { togglePopover } from 'dux/popover'
 
 let Document = ({
@@ -34,7 +34,7 @@ let Document = ({
               onClick={ () => dispatch(tagSentence({ sentence: s })) }
               onMouseOver={
                 () => {
-                  if (s.tag_value || suggestion) {
+                  if (s.tag_value) {
                     dispatch(togglePopover({
                       popoverContent: s.tag_value,
                       popoverId: s.id,
@@ -64,9 +64,9 @@ let Document = ({
                 />
               }
 
-              { suggestedTags.filter(x => x.sentence_id === s.id).map(x =>
+              { suggestedTags.filter(x => x.sentence_id === s.id).map(suggestion =>
                 <div
-                  key={x.id}
+                  key={suggestion.id}
                   style={{
                     padding: `0.5rem`,
                     margin: `0.5rem`,
@@ -74,10 +74,32 @@ let Document = ({
                     borderRadius: `6px`,
                     display: `flex`,
                   }}>
-                  <div>{ x.tag_value }</div>
+                  <div>{ suggestion.tag_value }</div>
                   <div style={{ marginLeft: `auto`, display: `flex` }}>
-                    <button>Keep</button>
-                    <button style={{ marginLeft: `10px`, color: `red` }}>Discard</button>
+                    <button
+                      onClick={
+                        event => {
+                          dispatch(createTag({ id: s.id, value: suggestion.tag_value }))
+                          dispatch(discardSuggestion({ suggestion }))
+                          event.stopPropagation()
+                          event.preventDefault()
+                        }
+                      }
+                    >
+                      Keep
+                    </button>
+                    <button
+                      onClick={
+                        event => {
+                          dispatch(discardSuggestion({ suggestion }))
+                          event.stopPropagation()
+                          event.preventDefault()
+                        }
+                      }
+                      style={{ marginLeft: `10px`, color: `red` }}
+                    >
+                      Discard
+                    </button>
                   </div>
                 </div>
               )}
