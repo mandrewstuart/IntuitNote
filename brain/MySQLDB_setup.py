@@ -49,21 +49,6 @@ CONSTRAINT `fk_tags_sent`
     ON UPDATE RESTRICT
 );
 
-CREATE USER 'ade'@'localhost' IDENTIFIED BY 'The A-Team'
+CREATE USER 'ade'@'localhost' IDENTIFIED BY 'The A-Team';
 
-GRANT SELECT ON TABLE subjects TO ade;
-GRANT UPDATE ON TABLE subjects TO ade;
-GRANT DELETE ON TABLE subjects TO ade;
-GRANT INSERT ON TABLE subjects TO ade;
-GRANT SELECT ON TABLE documents TO ade;
-GRANT UPDATE ON TABLE documents TO ade;
-GRANT DELETE ON TABLE documents TO ade;
-GRANT INSERT ON TABLE documents TO ade;
-GRANT SELECT ON TABLE sentences TO ade;
-GRANT UPDATE ON TABLE sentences TO ade;
-GRANT DELETE ON TABLE sentences TO ade;
-GRANT INSERT ON TABLE sentences TO ade;
-GRANT SELECT ON TABLE tags TO ade;
-GRANT UPDATE ON TABLE tags TO ade;
-GRANT DELETE ON TABLE tags TO ade;
-GRANT INSERT ON TABLE tags TO ade;
+GRANT SELECT, INSERT, UPDATE, DELETE ON mydb.* TO 'ade'@'localhost';

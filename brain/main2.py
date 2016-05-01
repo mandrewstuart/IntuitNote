@@ -101,9 +101,9 @@ def create_document():
         c = c + 1
         cursor.execute(
             """
-            INSERT INTO sentences (sent_ID, sent_doc_ID, sent_value, sent_taggable)
+            INSERT INTO sentences (sent_ID, sent_doc_ID, sent_value)
             VALUES ('{}', {}, '{}', {})
-            """.format(str(c), str(doc_ID), s, ("1" if (len(s)>5) else "0")))
+            """.format(str(c), str(doc_ID), s)
     conn.commit()
     return { 'document_ID': doc_ID }
 
