@@ -103,7 +103,7 @@ def create_document():
             """
             INSERT INTO sentences (sent_ID, sent_doc_ID, sent_value)
             VALUES ('{}', {}, '{}', {})
-            """.format(str(c), str(doc_ID), s)
+            """.format(str(c), str(doc_ID), s))
     conn.commit()
     return { 'document_ID': doc_ID }
 
