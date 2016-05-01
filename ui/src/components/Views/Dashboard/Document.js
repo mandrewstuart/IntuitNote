@@ -1,8 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Tooltip from 'material-ui/lib/tooltip'
-import { tagSentence, autoTag, discardSuggestion, createTag } from 'dux/documents'
+import { tagSentence, autoTag } from 'dux/documents'
 import { togglePopover } from 'dux/popover'
+import Suggestion from './Suggestion'
 
 let Document = ({
   document: d,
@@ -65,43 +66,11 @@ let Document = ({
               }
 
               { suggestedTags.filter(x => x.sentence_id === s.id).map(suggestion =>
-                <div
-                  key={suggestion.id}
-                  style={{
-                    padding: `0.5rem`,
-                    margin: `0.5rem`,
-                    border: `1px solid black`,
-                    borderRadius: `6px`,
-                    display: `flex`,
-                  }}>
-                  <div>{ suggestion.tag_value }</div>
-                  <div style={{ marginLeft: `auto`, display: `flex` }}>
-                    <button
-                      onClick={
-                        event => {
-                          dispatch(createTag({ id: s.id, value: suggestion.tag_value }))
-                          dispatch(discardSuggestion({ suggestion }))
-                          event.stopPropagation()
-                          event.preventDefault()
-                        }
-                      }
-                    >
-                      Keep
-                    </button>
-                    <button
-                      onClick={
-                        event => {
-                          dispatch(discardSuggestion({ suggestion }))
-                          event.stopPropagation()
-                          event.preventDefault()
-                        }
-                      }
-                      style={{ marginLeft: `10px`, color: `red` }}
-                    >
-                      Discard
-                    </button>
-                  </div>
-                </div>
+                <Suggestion
+                  key={suggestion.sentence_id}
+                  suggestion={suggestion}
+                  id={s.id}
+                />
               )}
             </span>
           )}
