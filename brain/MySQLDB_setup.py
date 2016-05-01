@@ -29,7 +29,6 @@ CONSTRAINT `fk_doc_subj`
 CREATE TABLE sentences(
 sent_ID bigint unsigned auto_increment primary key,
 sent_doc_ID bigint unsigned,
-sent_taggable bigint unsigned,
 sent_value varchar(2047) charset utf8,
 CONSTRAINT `fk_sent_doc`
     FOREIGN KEY (sent_doc_ID) REFERENCES documents (doc_ID)
