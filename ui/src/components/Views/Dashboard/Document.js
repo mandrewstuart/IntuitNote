@@ -34,7 +34,7 @@ let Document = ({
               onClick={ () => dispatch(tagSentence({ sentence: s })) }
               onMouseOver={
                 () => {
-                  if (s.tag_value) {
+                  if (s.tag_value || suggestion) {
                     dispatch(togglePopover({
                       popoverContent: s.tag_value,
                       popoverId: s.id,
@@ -63,6 +63,24 @@ let Document = ({
                   touch
                 />
               }
+
+              { suggestedTags.filter(x => x.sentence_id === s.id).map(x =>
+                <div
+                  key={x.id}
+                  style={{
+                    padding: `0.5rem`,
+                    margin: `0.5rem`,
+                    border: `1px solid black`,
+                    borderRadius: `6px`,
+                    display: `flex`,
+                  }}>
+                  <div>{ x.tag_value }</div>
+                  <div style={{ marginLeft: `auto`, display: `flex` }}>
+                    <button>Keep</button>
+                    <button style={{ marginLeft: `10px`, color: `red` }}>Discard</button>
+                  </div>
+                </div>
+              )}
             </span>
           )}
         </div>
