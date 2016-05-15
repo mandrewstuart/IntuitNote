@@ -10,6 +10,7 @@ let DocumentsList = ({
   <div className="documents-list">
     <div className="table-header">
       <div style={{ flex: 8 }}>Title</div>
+      <div style={{ flex: 2 }}># Tags</div>
       <div>Delete</div>
     </div>
 
@@ -24,6 +25,8 @@ let DocumentsList = ({
             {/* TODO: unify document name -> title */}
             { d.name || d.doc_name }
           </a>
+
+          <span style={{ flex: 2 }}>{d.tagsCount}</span>
 
           <a
             style={{ color: `rgb(147, 31, 11)` }}

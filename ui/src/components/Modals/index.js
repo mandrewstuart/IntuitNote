@@ -4,6 +4,7 @@ import NewDocument from './NewDocument'
 import Confirm from './Confirm'
 import CreateTag from './CreateTag'
 import ConfirmDocument from './ConfirmDocument'
+import NoSuggestions from './NoSuggestions'
 
 export default {
   AuthModal,
@@ -12,4 +13,5 @@ export default {
   Confirm,
   ConfirmDocument,
   CreateTag,
+  NoSuggestions,
 }

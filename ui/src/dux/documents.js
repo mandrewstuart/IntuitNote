@@ -3,6 +3,8 @@ import api from 'utils/api'
 
 import { GET_SUBJECT, CREATE_SUBJECT } from 'dux/subjects'
 
+import { toggleModal } from 'dux/modal'
+
 export let GET_DOCUMENT = `GET_DOCUMENT`
 export let CREATE_DOCUMENT = `CREATE_DOCUMENT`
 export let DELETE_DOCUMENT = `DELETE_DOCUMENT`
@@ -92,12 +94,14 @@ export let autoTag = ({ id }) =>
       body: { id },
     })
 
-    if (!message) {
+    if (!message && suggestedTags.length) {
       dispatch({
         type: AUTOTAG,
         payload: { suggestedTags },
       })
     }
+
+    else dispatch(toggleModal(`NoSuggestions`))
   }
 
 export let discardSuggestion = ({ suggestion }) =>

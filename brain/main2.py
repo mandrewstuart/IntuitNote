@@ -113,12 +113,16 @@ def show_subject():
     id = str(request.json['id'])
     cursor, conn = connect_to_db()
     cursor.execute(
-        'SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = {}'.format(id)
+        """SELECT doc_name, doc_ID, count(*) FROM documents d
+        inner join sentences s on s.sent_doc_ID = d.doc_ID
+        inner join tags t on t.tag_sent_ID = s.sent_ID
+        WHERE doc_subj_ID = {}
+        GROUP BY doc_name, doc_ID""".format(id)
         )
     docs = cursor.fetchall()
 
     return {
-        'documents': [ { 'name': item[0], 'id': item[1] } for item in docs ]
+        'documents': [ { 'name': item[0], 'id': item[1], 'tagsCount': item[2] } for item in docs ]
     }
 
 
