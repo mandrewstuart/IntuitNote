@@ -83,6 +83,8 @@ export let deleteSubject = ({ id }) =>
       type: DELETE_SUBJECT,
       payload: { id },
     })
+
+    dispatch(push(`/dashboard`))
   }
 
 export let toggleSubjectEditing = ({ id, name }) =>
