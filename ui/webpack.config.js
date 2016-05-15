@@ -40,7 +40,7 @@ module.exports = {
       dux: 'src/dux',
       style: 'src/style',
       utils: 'src/utils',
-      config: process.env.NODE_ENV === `production` ? `src/config/production` : `src/config`,
+      config: path.join(__dirname, 'config', process.env.NODE_ENV),
     },
     extensions: ['', '.js', '.styl'],
   },
