@@ -23,7 +23,7 @@ def subject_create():
     cursor.execute("INSERT INTO subjects (subj_name) VALUES ('{}')".format(name))
     cursor.execute(
         """
-        SELECT subj_ID FROM subjects WHERE subj_name = '{}';
+        SELECT max(subj_ID) FROM subjects WHERE subj_name = '{}';
         """.format(name))
     id = cursor.fetchall()[0][0]
     conn.commit()
@@ -85,25 +85,22 @@ def create_document():
         """.format(nom, subj_id, auteur, publication))
     cursor.execute(
         """
-        SELECT doc_ID FROM documents
+        SELECT max(doc_ID) FROM documents
         WHERE doc_name = '{}' AND doc_subj_ID = {};
         """.format(nom, subj_id))
     doc_ID = cursor.fetchall()[0][0]
     doc_ID = int(doc_ID)
     divise = parse_doc.parse_sentences(contenu)
-    cursor.execute('SELECT MAX(sent_ID) FROM sentences;')
-    c = cursor.fetchall()[0][0]
-    try:
-        c = int(c)
-    except:
-        c = 1
     for s in divise:
-        c = c + 1
+        print("""
+        INSERT INTO sentences (sent_doc_ID, sent_value)
+        VALUES ({}, '{}')
+        """.format(str(doc_ID), s))
         cursor.execute(
             """
-            INSERT INTO sentences (sent_ID, sent_doc_ID, sent_value)
-            VALUES ('{}', {}, '{}')
-            """.format(str(c), str(doc_ID), s))
+            INSERT INTO sentences (sent_doc_ID, sent_value)
+            VALUES ({}, '{}')
+            """.format(str(doc_ID), s))
     conn.commit()
     return { 'document_ID': doc_ID }
 
@@ -113,16 +110,16 @@ def show_subject():
     id = str(request.json['id'])
     cursor, conn = connect_to_db()
     cursor.execute(
-        """SELECT doc_name, doc_ID, count(*) FROM documents d
+        """SELECT doc_name, doc_ID, sum(CASE WHEN t.tag_id is not null then 1 else 0 end) FROM documents d
         inner join sentences s on s.sent_doc_ID = d.doc_ID
-        inner join tags t on t.tag_sent_ID = s.sent_ID
+        left join tags t on t.tag_sent_ID = s.sent_ID
         WHERE doc_subj_ID = {}
         GROUP BY doc_name, doc_ID""".format(id)
         )
     docs = cursor.fetchall()
 
     return {
-        'documents': [ { 'name': item[0], 'id': item[1], 'tagsCount': item[2] } for item in docs ]
+        'documents': [ { 'name': item[0], 'id': item[1], 'tagsCount': str(item[2]) } for item in docs ]
     }
 
 
