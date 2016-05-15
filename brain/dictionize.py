@@ -1,7 +1,8 @@
 import snowballstemmer
 from math import log
 stem = snowballstemmer.stemmer('Porter')
-punctuation = [',', '.', '!', "?", ';', ':', '"', "'", '(', ')', '#', '1','2','3','4','5','6','7','8','9','0']
+punctuation = [',', '.', '!', "?", ';', ':', '"', "'", '(', ')', '#', '1','2','3','4','5','6','7','8','9','0',
+'~','`','<br>','/','\\','|','[',']','{','}','-','_','<','>']
 
 def dictionize(dataset, labeled=0):
     tf = {}
@@ -12,6 +13,7 @@ def dictionize(dataset, labeled=0):
         for y in punctuation:
             a = a.replace(y, '')
         a = a.lower().split(' ')
+        a = list(filter(('').__ne__, a))
         for y in range(0, len(a)):
             a[y] = stem.stemWord(a[y])
         for y in a:
@@ -35,5 +37,5 @@ def idfize(dataset):
             except:
                 idf[y] = 1
     for x in idf:
-        idf[x] = log(len(dataset)/idf[x])
+        idf[x] = (log(len(dataset)/idf[x])**2)/15
     return idf

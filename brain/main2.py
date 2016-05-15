@@ -8,7 +8,7 @@ def escape_request(key):
     return html.escape(request.json[key])
 
 def connect_to_db():
-    conn = pymysql.connect(host="localhost", user="ade", passwd="The A-Team", db='ade_db')
+    conn = pymysql.connect(host="localhost", user="ade", passwd="The A-Team", db='ade_db', use_unicode=True, charset='utf8')
     return conn.cursor(), conn
 
 
@@ -310,7 +310,8 @@ def auto_tag():
         #create IDF dictionary
         idf = dictionize.idfize(X_plus_Y)
         #determine threshold
-        threshold = dictClassify.getAvgDist(X_plus_Y, idf)*2/3
+        #threshold = dictClassify.getAvgDist(X_plus_Y, idf)*2/3
+        threshold = 5.5
         #machine learning
         suggestions = dictClassify.distProxit(threshold, X['labels'], Y['tf'], idf)
     conn.commit()

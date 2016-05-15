@@ -27,14 +27,16 @@ def distProxit(threshold, labeled, test, idf):
     attribution = {}
     for label_key in labeled:
         for test_key in test:
-            newDist = dictManDist(list(label_key.values())[0], test[test_key], idf)
-            if (newDist<=threshold):
-                try:
-                    oldDist = attribution[test_key]['val']
-                    if (newDist<oldDist):
+            if (sum([test[test_key][x] for x in test[test_key]])>3):
+                newDist = dictManDist(list(label_key.values())[0], test[test_key], idf)
+                print(newDist)
+                if (newDist<=threshold):
+                    try:
+                        oldDist = attribution[test_key]['val']
+                        if (newDist<oldDist):
+                            attribution[test_key]={'val':newDist, 'tag': list(label_key.keys())[0]}
+                    except:
                         attribution[test_key]={'val':newDist, 'tag': list(label_key.keys())[0]}
-                except:
-                    attribution[test_key]={'val':newDist, 'tag': list(label_key.keys())[0]}
     output = []
     for x in attribution:
         output.append({
