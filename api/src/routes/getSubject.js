@@ -10,7 +10,7 @@ export default ({ api }) =>
       if (err) throw err
       if (user) {
 
-        if (user.subjects.find(x => x.id === id)) {
+        if (user.subjects.find(x => +x.id === +id)) {
           fetch(`${brain}/getSubject`, {
             method: `POST`,
             headers: { 'Content-Type': 'application/json' },

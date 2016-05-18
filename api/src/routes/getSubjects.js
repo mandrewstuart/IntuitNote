@@ -6,7 +6,7 @@ export default ({ api }) =>
     User.findOne({ email: userEmail }, (err, user) => {
       if (err) throw err
       if (user)
-        res.json({ subjects: user.subjects })
+        res.json({ subjects: user.subjects, success: true })
       else
         res.json({ message: `No user found` })
     })

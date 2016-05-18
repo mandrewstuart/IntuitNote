@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import Tooltip from 'material-ui/lib/tooltip'
+import Tooltip from 'material-ui/internal/Tooltip'
 import { tagSentence, autoTag } from 'dux/documents'
 import { togglePopover } from 'dux/popover'
 import Suggestion from './Suggestion'

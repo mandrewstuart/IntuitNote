@@ -2,7 +2,7 @@ import { push } from 'react-router-redux'
 import api from 'utils/api'
 import auth from '../auth'
 
-import { LOGIN_SUCCESS } from 'dux/auth'
+import { logout, LOGIN_SUCCESS } from 'dux/auth'
 
 export let GET_SUBJECTS = `GET_SUBJECTS`
 export let GET_SUBJECT = `GET_SUBJECT`
@@ -15,16 +15,22 @@ export let SUBJECT_NOT_FOUND = `SUBJECT_NOT_FOUND`
 export let getSubjects = () =>
   async dispatch => {
     if (auth.loggedIn()) {
-      let { subjects } = await api({ endpoint: `getSubjects` })
-      dispatch({
-        type: GET_SUBJECTS,
-        payload: { subjects },
-      })
+      let { subjects, success } = await api({ endpoint: `getSubjects` })
+
+      if (success) {
+        dispatch({
+          type: GET_SUBJECTS,
+          payload: { subjects },
+        })
+      } else dispatch(logout())
     }
   }
 
 export let getSubject = ({ id, redirect }) =>
   async dispatch => {
+
+    console.log(id, redirect)
+
     let { documents } = await api({
       endpoint: `getSubject`,
       body: { id },

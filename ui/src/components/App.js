@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { getSubjects, getSubject } from 'dux/subjects'
 import { getDocument } from 'dux/documents'
 import { toggleModal } from 'dux/modal'
-import Dialog from 'material-ui/lib/dialog'
+import Dialog from 'material-ui/Dialog'
 
 export class App extends Component {
   componentDidMount = () => {
