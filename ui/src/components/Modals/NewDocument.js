@@ -46,7 +46,7 @@ let NewDocument = ({
         </Dropzone>
       </div>*/}
 
-      <div>
+      <div style={{ display: `flex`, justifyContent: `center` }}>
         <button
           onClick={
             () => dispatch(createDocument({
@@ -62,6 +62,7 @@ let NewDocument = ({
         </button>
       </div>
     </div>
+    <div className="error">{ message }</div>
   </div>
 
 export default connect(

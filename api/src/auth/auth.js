@@ -83,7 +83,7 @@ export default ({
         if (err) {
           return res.json({ success: false, message: 'Failed to authenticate token.' })
         } else {
-          req.decoded = decoded
+          req.email = decoded._doc.email
           next()
         }
       })

@@ -3,30 +3,30 @@ import brain from '../../config/domain'
 
 export default ({ api }) =>
   api.post(`/updateSubject`, (req, res) => {
-    let { id, name, userEmail } = req.body
+    let { id, name } = req.body
 
-    fetch(`${brain}/updateSubject`, {
-      method: `POST`,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, name }),
-    })
-      .then(res => {
-        if (res.status >= 400)
-          throw new Error(`Bad response from server`)
+    User.findOne({ email: req.email }, (err, user) => {
+      if (err) res.json({ err })
 
-        return res.json()
+      fetch(`${brain}/updateSubject`, {
+        method: `POST`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, name }),
       })
-      .then(() => {
-        User.findOne({ email: userEmail }, (err, user) => {
-          if (err) throw err
+        .then(res => {
+          if (res.status >= 400)
+            throw new Error(`Bad response from server`)
 
+          return res.json()
+        })
+        .then(() => {
           user.subjects = user.subjects.find(x => x.id === id).name = name
 
-          user.save((err, user) => {
+          user.save(err => {
             if (err) throw err
             res.json({ message: `Subject updated.` })
           })
         })
-      })
-      .catch(error => res.json({ error: error.message }))
+        .catch(error => res.json({ error: error.message }))
+    })
   })

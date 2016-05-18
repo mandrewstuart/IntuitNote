@@ -5,6 +5,7 @@ import { GET_SUBJECT, CREATE_SUBJECT } from 'dux/subjects'
 
 import { toggleModal } from 'dux/modal'
 
+export let INVALID_DOCUMENT = `INVALID_DOCUMENT`
 export let GET_DOCUMENT = `GET_DOCUMENT`
 export let CREATE_DOCUMENT = `CREATE_DOCUMENT`
 export let DELETE_DOCUMENT = `DELETE_DOCUMENT`
@@ -32,17 +33,26 @@ export let getDocument = ({ id, subjectId }) =>
 export let createDocument = ({ title, author, text, publication, id }) =>
   async dispatch => {
 
-    let { id: doc_id } = await api({
-      endpoint: `createDocument`,
-      body: { title, author, text, publication, id },
-    })
+    if (!title || !text) {
+      dispatch({
+        type: INVALID_DOCUMENT,
+        payload: { message: `Title and text fields must contain values!` },
+      })
+    }
 
-    dispatch({
-      type: CREATE_DOCUMENT,
-      payload: {
-        document: { name: title, author, text, publication, id: doc_id },
-      },
-    })
+    else {
+      let { id: doc_id } = await api({
+        endpoint: `createDocument`,
+        body: { title, author, text, publication, id },
+      })
+
+      dispatch({
+        type: CREATE_DOCUMENT,
+        payload: {
+          document: { name: title, author, text, publication, id: doc_id },
+        },
+      })
+    }
   }
 
 export let editDocument = document => ({ type: EDIT_DOCUMENT, payload: document })

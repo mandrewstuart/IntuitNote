@@ -28,9 +28,7 @@ export let getSubjects = () =>
 
 export let getSubject = ({ id, redirect }) =>
   async dispatch => {
-
-    console.log(id, redirect)
-
+    
     let { documents } = await api({
       endpoint: `getSubject`,
       body: { id },
