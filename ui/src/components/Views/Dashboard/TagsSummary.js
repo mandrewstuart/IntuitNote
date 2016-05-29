@@ -3,12 +3,12 @@ import { connect } from 'react-redux'
 import { toggleModal } from 'dux/modal'
 import { getDocument, editDocument } from 'dux/documents'
 
-let DocumentsList = ({
+let TagsSummary = ({
   dispatch,
   documents,
 }) =>
   <div className="documents-list">
-    <h5>Documents</h5>
+    <h5>Tags Summary</h5>
 
     <div className="table-header">
       <div style={{ flex: 8 }}>Title</div>
@@ -50,4 +50,4 @@ export default connect(
   state => ({
     ...state.documents,
   })
-)(DocumentsList)
+)(TagsSummary)

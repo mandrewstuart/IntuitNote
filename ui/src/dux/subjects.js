@@ -12,6 +12,8 @@ export let DELETE_SUBJECT = `DELETE_SUBJECT`
 export let TOGGLE_SUBJECT_EDITING = `TOGGLE_SUBJECT_EDITING`
 export let SUBJECT_NOT_FOUND = `SUBJECT_NOT_FOUND`
 
+export let GET_SUMMARY = `GET_SUMMARY`
+
 export let getSubjects = () =>
   async dispatch => {
     if (auth.loggedIn()) {
@@ -28,7 +30,7 @@ export let getSubjects = () =>
 
 export let getSubject = ({ id, redirect }) =>
   async dispatch => {
-    
+
     let { documents } = await api({
       endpoint: `getSubject`,
       body: { id },
@@ -39,6 +41,18 @@ export let getSubject = ({ id, redirect }) =>
         type: GET_SUBJECT,
         payload: { id, documents },
       })
+
+      if (documents.some(x => +x.tagsCount)) {
+        let { summary } = await api({
+          endpoint: `proxy`,
+          body: { subj_id: id, endpoint: `reviewTags` },
+        })
+
+        dispatch({
+          type: GET_SUMMARY,
+          payload: { summary },
+        })
+      }
 
       if (redirect) dispatch(push(`/dashboard/subject/${id}`))
     }

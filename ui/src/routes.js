@@ -14,7 +14,7 @@ import Home from 'components/Views/Home'
 import Dashboard from 'components/Views/Dashboard'
 import Subject from 'components/Views/Dashboard/Subject'
 import Document from 'components/Views/Dashboard/Document'
-import DocumentsList from 'components/Views/Dashboard/DocumentsList'
+import SubjectTables from 'components/Views/Dashboard/SubjectTables'
 import reducers from 'dux'
 import auth from './auth'
 
@@ -41,7 +41,7 @@ export default
           <Route path="/" component={ Home } />
           <Route path="/dashboard" component={ Dashboard } onEnter={ requireAuth }>
             <Route path="subject/:subject" component={ Subject }>
-              <IndexRoute component={ DocumentsList } />
+              <IndexRoute component={ SubjectTables } />
               <Route path="document/:document" component={ Document } />
             </Route>
           </Route>

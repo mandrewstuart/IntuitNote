@@ -1,3 +1,5 @@
+import proxy from './proxy'
+
 /*
  *  Subjects
  */
@@ -34,4 +36,5 @@ export {
   getDocument,
   createTag,
   autoTag,
+  proxy,
 }

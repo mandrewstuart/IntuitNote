@@ -6,14 +6,14 @@ export default ({ api }) =>
   api.post(`/proxy`, (req, res) => {
     let { userEmail, name, endpoint } = req.body
 
-    User.findOne({ email: req.docoded.email }, (err, user) => {
+    User.findOne({ email: req.email }, (err, user) => {
 
       if (user) {
 
         fetch(`${brain}/${endpoint}`, {
           method: `POST`,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name }),
+          body: JSON.stringify(req.body),
         })
           .then(res => {
             if (res.status >= 400)
@@ -21,16 +21,9 @@ export default ({ api }) =>
 
             return res.json()
           })
-          .then(({ id }) => {
-
+          .then(summary => {
               if (err) throw err
-
-              user.subjects = [ ...user.subjects, { name, id, numDocuments: 0 } ]
-
-              user.save((err, user) => {
-                if (err) throw err
-                res.json({ id })
-              })
+              res.json({ summary })
           })
           .catch(error => res.json({ error: error.message }))
 
