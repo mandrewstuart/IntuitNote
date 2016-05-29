@@ -224,32 +224,14 @@ def review():
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = """ + str(subj_id) + " ORDER BY se.sent_ID ASC")
     data = cursor.fetchall()
-    doc_id = -1
-    documents = []
-    for row in data:
-        if (-1==doc_id):
-            docData = {}
-            doc_id = int(row[1])
-            docData['document_id'] = doc_id
-            docData['document_name'] = row[0]
-            sentences = []
-        elif (int(row[1])!=doc_id):
-            docData['sentences'] = sentences
-            documents.append(docData)
-            sentences = []
-            doc_id = int(row[1])
-            docData = {}
-            docData['document_id'] = doc_id
-            docData['document_name'] = row[0]
-        sentence = {}
-        sentence['sentence_value'] = row[3]
-        sentence['sentence_id'] = int(row[2])
-        sentence['tag_value'] = row[4]
-        sentence['tag_id'] = int(row[5])
-        sentences.append(sentence)
-    docData['sentences'] = sentences
-    documents.append(docData)
-    output['documents']= documents
+    output = []
+    for x in data:
+        output.append({'doc_name': x[0],
+        'doc_ID': x[1],
+        'sent_value': x[3],
+        'sent_ID': x[2],
+        'tag_value': x[4],
+        'tag_ID': x[5]})
     return output
 
 

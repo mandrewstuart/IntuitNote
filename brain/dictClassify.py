@@ -28,6 +28,7 @@ def distProxit(threshold, labeled, test, idf):
     for label_key in labeled:
         for test_key in test:
             if (sum([test[test_key][x] for x in test[test_key]])>3):
+                print(sum([test[test_key][x] for x in test[test_key]])>3)
                 newDist = dictManDist(list(label_key.values())[0], test[test_key], idf)
                 print(newDist)
                 if (newDist<=threshold):

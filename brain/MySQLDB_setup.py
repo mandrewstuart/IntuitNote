@@ -50,4 +50,4 @@ CONSTRAINT `fk_tags_sent`
 
 CREATE USER 'ade'@'localhost' IDENTIFIED BY 'The A-Team';
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON mydb.* TO 'ade'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON ade_db.* TO 'ade'@'localhost';
