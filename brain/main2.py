@@ -232,7 +232,8 @@ def review():
         'sent_ID': x[2],
         'tag_value': x[4],
         'tag_ID': x[5]})
-    return output
+
+    return { 'output': output }
 
 
 @post('/deleteTag')

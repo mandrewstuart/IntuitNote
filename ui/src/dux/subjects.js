@@ -43,14 +43,14 @@ export let getSubject = ({ id, redirect }) =>
       })
 
       if (documents.some(x => +x.tagsCount)) {
-        let { summary } = await api({
+        let data = await api({
           endpoint: `proxy`,
           body: { subj_id: id, endpoint: `reviewTags` },
         })
 
         dispatch({
           type: GET_SUMMARY,
-          payload: { summary },
+          payload: data,
         })
       }
 

@@ -21,9 +21,9 @@ export default ({ api }) =>
 
             return res.json()
           })
-          .then(summary => {
+          .then(data => {
               if (err) throw err
-              res.json({ summary })
+              res.json(data)
           })
           .catch(error => res.json({ error: error.message }))
 

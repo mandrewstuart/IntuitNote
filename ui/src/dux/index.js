@@ -4,6 +4,7 @@ import subjects from './subjects'
 import documents from './documents'
 import message from './message'
 import popover from './popover'
+import summary from './summary'
 
 export default {
   auth,
@@ -12,4 +13,5 @@ export default {
   message,
   documents,
   popover,
+  summary,
 }

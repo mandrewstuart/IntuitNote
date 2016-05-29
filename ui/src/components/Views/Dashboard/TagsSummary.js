@@ -5,42 +5,29 @@ import { getDocument, editDocument } from 'dux/documents'
 
 let TagsSummary = ({
   dispatch,
-  documents,
+  output,
 }) =>
   <div className="documents-list">
     <h5>Tags Summary</h5>
 
     <div className="table-header">
-      <div style={{ flex: 8 }}>Title</div>
-      <div style={{ flex: 2 }}># Tags</div>
-      <div>Delete</div>
+      <div style={{ flex: 4 }}><a>Document Title</a></div> {/* MAKE LINK */}
+      <div style={{ flex: 2 }}>Doc Author</div>
+      <div style={{ flex: 2 }}>Doc Publication</div>
+      <div style={{ flex: 2 }}>Doc Publication Date</div>
+      <div style={{ flex: 2 }}>Sentence</div>
+      <div style={{ flex: 2 }}>Tag</div>
     </div>
 
     <div>
-      { documents.map(d =>
-        // TODO: unify document id -> id
-        <div key={ d.id || d.doc_id } className="table-row">
-          <a
-            style={{ flex: 8 }}
-            onClick={ () => dispatch(getDocument({ id: d.id, subjectId: location.pathname.split(`/`).pop() })) }
-          >
-            {/* TODO: unify document name -> title */}
-            { d.name || d.doc_name }
-          </a>
-
-          <span style={{ flex: 2 }}>{d.tagsCount}</span>
-
-          <a
-            style={{ color: `rgb(147, 31, 11)` }}
-            onClick={
-              () => {
-                dispatch(editDocument({ document: d }))
-                dispatch(toggleModal(`ConfirmDocument`))
-              }
-            }
-          >
-            <i className="fa fa-trash-o" />
-          </a>
+      { output.map(row =>
+        <div key={row.tag_ID} className="table-row">
+          <div style={{ flex: 4 }}>{row.doc_name}</div>
+          <div style={{ flex: 2 }}>--</div>
+          <div style={{ flex: 2 }}>--</div>
+          <div style={{ flex: 2 }}>--</div>
+          <div style={{ flex: 2 }}>{row.sent_value}</div>
+          <div style={{ flex: 2 }}>{row.tag_value}</div>
         </div>
       )}
     </div>
@@ -48,6 +35,6 @@ let TagsSummary = ({
 
 export default connect(
   state => ({
-    ...state.documents,
+    ...state.summary
   })
 )(TagsSummary)
