@@ -1,3 +1,5 @@
+import itertools
+
 #needs the idf global
 def dictManDist(t,s,idf):
     dist = 0
@@ -14,23 +16,22 @@ def dictManDist(t,s,idf):
 
 def getAvgDist(tf, idf):
     vals = list(tf.values())
-    avg = 0
+    s = 0
     c = 0
     for x in range(0, len(tf)):
         for y in range(x+1, len(tf)):
             c = c + 1
-            avg = (avg*(c-1) + dictManDist(vals[x], vals[y], idf))/c
-    return avg
+            s = s + dictManDist(vals[x], vals[y], idf)
+    return s / c
+
 
 #needs the idf global
 def distProxit(threshold, labeled, test, idf):
     attribution = {}
     for label_key in labeled:
         for test_key in test:
-            if (sum([test[test_key][x] for x in test[test_key]])>3):
-                print(sum([test[test_key][x] for x in test[test_key]])>3)
+            if (sum([test[test_key][x] for x in test[test_key]])>4):
                 newDist = dictManDist(list(label_key.values())[0], test[test_key], idf)
-                print(newDist)
                 if (newDist<=threshold):
                     try:
                         oldDist = attribution[test_key]['val']

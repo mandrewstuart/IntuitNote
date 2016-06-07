@@ -1,6 +1,6 @@
 from bottle import response, redirect, route, run, template, get, post, request, error, SimpleTemplate
-import os, pymysql, html, parse_doc
-import dictionize, dictClassify
+import os, pymysql, html
+import dictionize, dictClassify, parse_doc
 
 response.content_type = 'application/json'
 
@@ -27,7 +27,6 @@ def subject_create():
         """.format(name))
     id = cursor.fetchall()[0][0]
     conn.commit()
-    print({ 'id': id })
     return { 'id': id }
 
 
@@ -92,10 +91,6 @@ def create_document():
     doc_ID = int(doc_ID)
     divise = parse_doc.parse_sentences(contenu)
     for s in divise:
-        print("""
-        INSERT INTO sentences (sent_doc_ID, sent_value)
-        VALUES ({}, '{}')
-        """.format(str(doc_ID), s))
         cursor.execute(
             """
             INSERT INTO sentences (sent_doc_ID, sent_value)
@@ -169,7 +164,7 @@ def show_document():
                 {
                     'value': html.unescape(x[0]),
                     'id': x[1],
-                    'tag_value': x[2],
+                    'tag_value': html.unescape(x[2]),
                     'tag_id': x[3]
                 }
                 for x in sentences
@@ -228,9 +223,9 @@ def review():
     for x in data:
         output.append({'doc_name': x[0],
         'doc_ID': x[1],
-        'sent_value': x[3],
+        'sent_value': html.unescape(x[3]),
         'sent_ID': x[2],
-        'tag_value': x[4],
+        'tag_value': html.unescape(x[4]),
         'tag_ID': x[5]})
     return output
 
@@ -254,7 +249,7 @@ def auto_tag():
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
-                                    WHERE doc_ID = """ + str(doc_id) + ")")
+                                    WHERE doc_ID = """ + str(doc_id) + ") OR doc_subj_ID = 13")
     tag_count = cursor.fetchall()[0][0]
     #inform the user if they still need to tag something already
     if (tag_count == 0):
@@ -274,7 +269,7 @@ def auto_tag():
         data = cursor.fetchall()
         training_data = []
         for x in data:
-            training_data.append([ html.unescape(x[0]), x[2], x[1] ])
+            training_data.append([ html.unescape(x[0]), html.unescape(x[2]), x[1] ])
         cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE sent_value <> "<br>" AND length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID')
         target = cursor.fetchall()
         test_data = []
@@ -289,8 +284,8 @@ def auto_tag():
         #create IDF dictionary
         idf = dictionize.idfize(X_plus_Y)
         #determine threshold
-        #threshold = dictClassify.getAvgDist(X_plus_Y, idf)*2/3
-        threshold = 35
+        #threshold = dictClassify.getAvgDist(X_plus_Y, idf)
+        threshold = 36
         #machine learning
         suggestions = dictClassify.distProxit(threshold, X['labels'], Y['tf'], idf)
     conn.commit()

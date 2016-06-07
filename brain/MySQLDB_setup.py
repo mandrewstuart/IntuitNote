@@ -48,6 +48,9 @@ CONSTRAINT `fk_tags_sent`
     ON UPDATE RESTRICT
 );
 
+CREATE TABLE threshold (val int(10));
+INSERT INTO threshold (val) VALUES (30);
+
 CREATE USER 'ade'@'localhost' IDENTIFIED BY 'The A-Team';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ade_db.* TO 'ade'@'localhost';
