@@ -37,5 +37,5 @@ def idfize(dataset):
             except:
                 idf[y] = 1
     for x in idf:
-        idf[x] = (log(len(dataset)/idf[x])**2)/15
+        idf[x] = (len(dataset)/idf[x]/15)**2
     return idf
