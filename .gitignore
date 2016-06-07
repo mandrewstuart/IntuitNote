@@ -1,6 +1,9 @@
 README.md~
 .gitignore~
 
+# ui
+ui/dist/bundle.js
+
 # node
 secrets
 node_modules
