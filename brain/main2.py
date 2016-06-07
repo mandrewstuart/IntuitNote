@@ -271,7 +271,7 @@ def auto_tag():
         training_data = []
         for x in data:
             training_data.append([ html.unescape(x[0]), x[2], x[1] ])
-        cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE sent_value <> "<br>" AND length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID')
+        cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE sent_value not like "<br>%" AND length(sent_value) > 7 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID')
         target = cursor.fetchall()
         test_data = []
         for x in target:
