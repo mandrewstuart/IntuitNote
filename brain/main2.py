@@ -286,7 +286,7 @@ def auto_tag():
         idf = dictionize.idfize(X_plus_Y)
         #determine threshold
         #threshold = dictClassify.getAvgDist(X_plus_Y, idf)
-        threshold = 36
+        threshold = cursor.execute('select * from threshold;').fetchall()[0][0]
         #machine learning
         suggestions = dictClassify.distProxit(threshold, X['labels'], Y['tf'], idf)
     conn.commit()
