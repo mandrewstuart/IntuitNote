@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { toggleModal } from 'dux/modal'
 import { getSubject } from 'dux/subjects'
-
+import { logout } from 'dux/auth'
 let Sidebar = ({
   user,
   subject,
@@ -10,7 +10,7 @@ let Sidebar = ({
   dispatch,
 }) =>
   <div className="sidebar z-depth-2">
-    <div className="logo center">APPRENTICE DATA EXTRACTOR</div>
+    <div className="logo center">IntuitNote</div>
     <div className="greeting">
       <div className="welcome">Welcome</div>
       <i className="fa fa-user" />
@@ -35,6 +35,8 @@ let Sidebar = ({
         </div>
       )}
     </div>
+    <a
+    onClick={ () => dispatch(logout()) }>Logout</a>
   </div>
 
 export default connect(

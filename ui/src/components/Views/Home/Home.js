@@ -10,19 +10,19 @@ let Home = ({
   dispatch,
 }) =>
   <div className="home">
-    <Link className="logo" to="/">APPRENTICE DATA EXTRACTOR</Link>
+    <Link className="logo" to="/">IntuitNote</Link>
     <p>
-      Project ADE is Software as a Service for people who extract data from texts.<br />
-      Not only can you tag and extract sentences with tags, we will also suggest new tags for you based on prior tags.
+      IntuitNote is for text researchers such as academics who write papers.<br />
+      You can tag and extract sentences with tags and we will also suggest where old tags belong in new documents.
     </p>
 
     <p>
-      Our Freemium model means you can try for free now, then pay only if you decide you like it.<br />
+      Please enjoy free use while we test our beta.<br />
       Sign up, create subjects, insert documents, tag sentences, and please let us know what you think.
     </p>
 
     <p>
-      Contact <a href="mailto:info@projectade.com">info@projectade.com</a> with comments, question, concerns, or queries.
+      Contact <a href="mailto:info@intuitnote.ca">info@intuitnote.ca</a> with comments, question, concerns, or queries.
     </p>
 
     <div className="menu">
