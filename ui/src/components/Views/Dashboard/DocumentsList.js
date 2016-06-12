@@ -17,7 +17,7 @@ let DocumentsList = ({
     </div>
 
     <div>
-      { documents.map(d =>
+      { (documents || []).map(d =>
         // TODO: unify document id -> id
         <div key={ d.id || d.doc_id } className="table-row">
           <a

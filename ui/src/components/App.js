@@ -10,7 +10,7 @@ export class App extends Component {
     let { dispatch, params: { subject, document } } = this.props
 
     dispatch(getSubjects())
-
+    //
     if (document) {
       dispatch(getDocument({
         id: document,

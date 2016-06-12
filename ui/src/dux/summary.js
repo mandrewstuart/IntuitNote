@@ -5,11 +5,12 @@ let intialState = { output: [] }
 export default (state = intialState, action) => {
   switch (action.type) {
     case subjects.GET_SUMMARY:
-      console.log('...', action.payload)
       return action.payload
 
+    case subjects.CREATE_SUBJECT:
+      return intialState
+
     default:
-      console.log(state)
       return state
 
   }

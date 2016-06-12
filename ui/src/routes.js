@@ -15,6 +15,9 @@ import Dashboard from 'components/Views/Dashboard'
 import Subject from 'components/Views/Dashboard/Subject'
 import Document from 'components/Views/Dashboard/Document'
 import SubjectTables from 'components/Views/Dashboard/SubjectTables'
+
+/*----------------------------------------------------------------------------*/
+
 import reducers from 'dux'
 import auth from './auth'
 

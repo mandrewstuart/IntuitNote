@@ -8,6 +8,7 @@ let title, author, publication, date, text
 
 let NewDocument = ({
   message,
+  subject,
   subjects,
   dispatch,
   handleDrop,
@@ -54,7 +55,7 @@ let NewDocument = ({
               author: author.value,
               publication: publication.value,
               text: text.value,
-              id: subjects.find(s => s.active).id,
+              id: subject.id,
             }))
           }
         >

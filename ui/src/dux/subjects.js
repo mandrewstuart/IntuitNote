@@ -17,24 +17,23 @@ export let GET_SUMMARY = `GET_SUMMARY`
 export let getSubjects = () =>
   async dispatch => {
     if (auth.loggedIn()) {
-      let { subjects, success } = await api({ endpoint: `getSubjects` })
+      let { subjects } = await api({ endpoint: `getSubjects` })
 
-      if (success) {
+      // TODO: check http code instead of success key
+
+      // if (success) {
         dispatch({
           type: GET_SUBJECTS,
           payload: { subjects },
         })
-      } else dispatch(logout())
+      // } else dispatch(logout())
     }
   }
 
 export let getSubject = ({ id, redirect }) =>
   async dispatch => {
 
-    let { documents } = await api({
-      endpoint: `getSubject`,
-      body: { id },
-    })
+    let { documents } = await api({ endpoint: `getSubject`, id })
 
     if (documents) {
       dispatch({
@@ -44,8 +43,7 @@ export let getSubject = ({ id, redirect }) =>
 
       if (documents.some(x => +x.tagsCount)) {
         let data = await api({
-          endpoint: `proxy`,
-          body: { subj_id: id, endpoint: `reviewTags` },
+          subj_id: id, endpoint: `reviewTags`,
         })
 
         dispatch({
@@ -67,10 +65,7 @@ export let createSubject = ({ name }) =>
   async dispatch => {
     if (!name) return dispatch({ type: INVALID_SUBJECT })
 
-    let { id } = await api({
-      endpoint: `createSubject`,
-      body: { name },
-    })
+    let { id } = await api({ name, endpoint: `createSubject` })
 
     console.log(`Subject created! ID: `, id)
 
@@ -92,10 +87,7 @@ export let createSubject = ({ name }) =>
 
 export let deleteSubject = ({ id }) =>
   async dispatch => {
-    await api({
-      endpoint: `deleteSubject`,
-      body: { id },
-    })
+    await api({ id, endpoint: `deleteSubject` })
 
     dispatch({
       type: DELETE_SUBJECT,
@@ -109,8 +101,8 @@ export let toggleSubjectEditing = ({ id, name }) =>
   async dispatch => {
     if (this.state.editingSubject) {
       let data = await api({
+        id, name,
         endpoint: `updateSubject`,
-        body: { id, name },
       })
       let { subjects } = this.state
       subjects.find(x => x.id === id).name = name
@@ -121,7 +113,10 @@ export let toggleSubjectEditing = ({ id, name }) =>
 
 /*----------------------------------------------------------------------------*/
 
-let intialState = { subjects: [] }
+let intialState = {
+  subjects: [],
+  subject: { name: `` },
+}
 
 export default (state = intialState, action) => {
 
@@ -137,19 +132,17 @@ export default (state = intialState, action) => {
     case GET_SUBJECT:
       return {
         ...state,
-        subjects: state.subjects.map(s => ({
-          ...s,
-          active: s.id === action.payload.id,
-        })),
+        subject: state.subjects.find(x => +x.id === +action.payload.id),
       }
 
     case CREATE_SUBJECT:
       return {
         ...state,
         subjects: [
-          ...state.subjects.map(s => ({ ...s, active: false })),
+          ...state.subjects,
           action.payload.subject,
         ],
+        subject: action.payload.subject,
       }
 
     case DELETE_SUBJECT:

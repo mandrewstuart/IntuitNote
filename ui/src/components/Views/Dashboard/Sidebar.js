@@ -5,6 +5,7 @@ import { getSubject } from 'dux/subjects'
 
 let Sidebar = ({
   user,
+  subject,
   subjects,
   dispatch,
 }) =>
@@ -26,7 +27,7 @@ let Sidebar = ({
       { subjects.map(s =>
         <div
           key={ s.id }
-          className={ `subject-nav-item ${s.active ? `active` : ``}` }
+          className={ `subject-nav-item ${s.id === subject.id ? `active` : ``}` }
           onClick={ () => dispatch(getSubject({ id: s.id, redirect: true })) }
         >
           <a className="new-subject">{ s.name }</a>
