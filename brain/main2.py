@@ -270,8 +270,8 @@ def auto_tag():
         data = cursor.fetchall()
         training_data = []
         for x in data:
-            training_data.append([ html.unescape(x[0]), x[2], html.unescape(x[1]) ])
-        cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE sent_value <> "<br>" AND length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID')
+            training_data.append([ html.unescape(x[0]), x[2], x[1] ])
+        cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE trim(replace(sent_value, "\t","")) <> "<br>" AND length(trim(sent_value)) > 10 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID')
         target = cursor.fetchall()
         test_data = []
         for x in target:
@@ -286,7 +286,8 @@ def auto_tag():
         idf = dictionize.idfize(X_plus_Y)
         #determine threshold
         #threshold = dictClassify.getAvgDist(X_plus_Y, idf)
-        threshold = cursor.execute('select * from threshold;').fetchall()[0][0]
+        cursor.execute('select * from threshold;')
+        threshold = cursor.fetchall()[0][0]
         #machine learning
         suggestions = dictClassify.distProxit(threshold, X['labels'], Y['tf'], idf)
     conn.commit()
