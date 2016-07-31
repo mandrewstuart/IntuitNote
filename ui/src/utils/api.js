@@ -1,8 +1,7 @@
-import { domain } from 'config'
 import fetch from 'isomorphic-fetch'
 
 export default async body => {
-  let response = await fetch(`${domain}:8080/api/proxy`, {
+  let response = await fetch(`${API_URL}/api/proxy`, {
     method: `POST`,
     headers: { 'Content-Type': `application/json` },
     body: JSON.stringify({

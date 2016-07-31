@@ -2,15 +2,16 @@
   "name": "ui",
   "version": "1.0.0",
   "scripts": {
-    "test": "find ./src -name '*.test.js' | NODE_PATH=./src xargs mocha -r babel-core/register -r mock-local-storage",
-    "start": "NODE_ENV=development node server.dev.js",
+    "test": "NODE_ENV=development find ./src -name '*.test.js' | NODE_PATH=./src xargs mocha -r babel-core/register -r mock-local-storage",
+    "start": "NODE_ENV=development API_URL=$'\"http://localhost:8080\"' node server.dev.js",
     "start-prod": "NODE_ENV=production node server.dev.js",
     "deploy": "NODE_ENV=production webpack -p --config webpack.production.config.js && node server.prod.js",
     "lint": "eslint src",
-    "lint-fix": "eslint --fix src"
+    "lint-fix": "eslint --fix src",
+    "test-watch": "find ./src -name '*.test.js' | env API_URL=$'\"http://localhost:8080\"' NODE_ENV=test NODE_PATH=./src xargs mocha --require babel-core/register -w -r mock-local-storage"
   },
   "dependencies": {
-    "babel-polyfill": "^6.5.0",
+    "babel-polyfill": "^6.9.1",
     "history": "^2.0.0",
     "isomorphic-fetch": "^2.2.1",
     "material-ui": "^0.15.0",
