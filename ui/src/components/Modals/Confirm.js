@@ -5,7 +5,7 @@ import { deleteSubject } from 'dux/subjects'
 
 let Confirm = ({
   message,
-  subjects,
+  subject,
   dispatch,
 }) =>
   <div className="confirm modal-content">
@@ -13,7 +13,7 @@ let Confirm = ({
     <div className="new-subject form">
       <div className="button-row">
         <button className="delete" onClick={ () =>
-          dispatch(deleteSubject({ id: subjects.find(s => s.active).id }))
+          dispatch(deleteSubject({ id: subject.id }))
         }>
           YES, DELETE
         </button>

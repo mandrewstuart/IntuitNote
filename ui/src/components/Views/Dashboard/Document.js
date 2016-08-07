@@ -15,6 +15,7 @@ let Document = ({
   <div>
     <div key={ d.id || d.doc_id }>
       <div style={{ display: `flex`, alignItems: `center` }}>
+        <div className="name-row-type">DOCUMENT/</div>
         <div className="document-title">{ d.name || d.doc_name }</div>
 
         <button

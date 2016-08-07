@@ -5,7 +5,7 @@ import { deleteDocument } from 'dux/documents'
 
 let ConfirmDocument = ({
   message,
-  subjects,
+  subject,
   documentBeingEdited,
   dispatch,
 }) =>
@@ -15,7 +15,7 @@ let ConfirmDocument = ({
       <div className="button-row">
         <button className="delete" onClick={ () =>
           dispatch(deleteDocument({
-            subjId: subjects.find(s => s.active).id,
+            subjId: subject.id,
             docId: documentBeingEdited.id,
           }))
         }>

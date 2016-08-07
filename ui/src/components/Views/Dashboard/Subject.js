@@ -47,8 +47,8 @@ let Subject = ({
     {!documents.length &&
       <div className="center full no-items">
         <i className="fa fa-file-o" />
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#209828' }}>
+        <div style={{ display: `flex`, flexDirection: `column` }}>
+          <span style={{ fontSize: `1.5rem`, marginBottom: `0.5rem`, color: `#209828` }}>
             Begin by adding your first document!
           </span>
           <button
