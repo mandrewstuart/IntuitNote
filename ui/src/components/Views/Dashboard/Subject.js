@@ -9,11 +9,13 @@ let Subject = ({
   subject: s,
   editingSubject,
   dispatch,
+  documents,
   children,
 }) =>
   <div className="subject-area">
     <div key={ s.name }>
       <div className="name-row">
+        <div className="name-row-type">SUBJECT/</div>
         <div className="subject-name">
           { editingSubject
             ? <input ref={ node => name = node } autoFocus type="text" defaultValue={ s.name } />
@@ -21,25 +23,50 @@ let Subject = ({
           }
         </div>
 
-        <div className="subject-toolbar">
+        {!!documents.length &&
+          <div className="subject-toolbar">
+            <button
+              onClick={ () => dispatch(toggleModal(`NewDocument`)) }
+            >
+              ADD DOCUMENT
+              <i className="fa fa-plus" />
+            </button>
+
+            <button
+              className="delete-btn"
+              onClick={ () => dispatch(toggleModal(`Confirm`)) }
+            >
+              EDIT
+              <i className="fa fa-edit" />
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+    {!documents.length &&
+      <div className="center full no-items">
+        <i className="fa fa-file-o" />
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <span style={{ fontSize: '1.5rem', marginBottom: '0.5rem', color: '#209828' }}>
+            Begin by adding your first document!
+          </span>
           <button
             onClick={ () => dispatch(toggleModal(`NewDocument`)) }
           >
             ADD DOCUMENT
             <i className="fa fa-plus" />
           </button>
-
-          <button
-            className="delete-btn"
-            onClick={ () => dispatch(toggleModal(`Confirm`)) }
-          >
-            EDIT
-            <i className="fa fa-edit" />
-          </button>
         </div>
       </div>
-    </div>
-    <div>{ children }</div>
+    }
+
+    {!!documents.length &&
+      <div>{ children }</div>
+    }
   </div>
 
-export default connect(state => state.subjects)(Subject)
+export default connect(state => ({
+  ...state.subjects,
+  ...state.documents,
+}))(Subject)

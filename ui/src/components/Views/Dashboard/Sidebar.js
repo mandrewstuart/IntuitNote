@@ -15,6 +15,7 @@ let Sidebar = ({
       <div className="welcome">Welcome</div>
       <i className="fa fa-user" />
       <span>{ user.email }</span>
+      <a className="logout-link" onClick={ () => dispatch(logout()) }>Logout</a>
     </div>
     <div className="subject-nav">
       <div
@@ -35,8 +36,6 @@ let Sidebar = ({
         </div>
       )}
     </div>
-    <a
-    onClick={ () => dispatch(logout()) }>Logout</a>
   </div>
 
 export default connect(
