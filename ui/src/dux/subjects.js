@@ -87,7 +87,7 @@ export let createSubject = ({ name }) =>
 
 export let deleteSubject = ({ id }) =>
   async dispatch => {
-    await api({ id, endpoint: `deleteSubject` })
+    await api({ subj_id: id, endpoint: `deleteSubject` })
 
     dispatch({
       type: DELETE_SUBJECT,

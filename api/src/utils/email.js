@@ -1,9 +1,9 @@
+import chalk from 'chalk'
 import fetch from 'isomorphic-fetch'
 import { clientURL } from '../../config/domain'
 import { sendInBlueApi, sendInBlueKey } from '../../config/email'
 
 let api = async ({ endpoint, method, body }) => {
-  console.log('>>>', body)
   let response = await fetch(`${sendInBlueApi}/${endpoint}`, {
     method,
     headers: {
@@ -15,25 +15,29 @@ let api = async ({ endpoint, method, body }) => {
 
   let data = await response.json()
 
-  console.log('>>>', data)
+  console.log(chalk.cyan(
+    `Sendinblue response:
+
+        ${data}
+
+    `
+  ))
 }
 
 let sendEmail = ({
-  // template,
   to,
   // attr
 }) => {
   return api({
-    // endpoint: `template/${template}`,
     endpoint: `email`,
     method: `POST`,
     body: {
       to: { [to]: to },
       subject: `Welcome to IntuitNote!`,
       from: [ `intuitnote@gmail.com`, `IntuitNote Concierge` ],
-      html: "Welcome to IntuiNote!",
+      html:
+        `Welcome to IntuitNote!`,
     },
-    // body: { to, attr },
   })
 }
 
@@ -57,12 +61,10 @@ export let sendPasswordResetEmail = ({ username, email, resetToken }) => {
 }
 
 export let sendWelcomeEmail = ({ email }) => {
-  // let confirmLink = `${clientURL}/confirm-user?token=${confirmToken}&email=${email}`
-  return sendEmail({ template: 1, to: email })
-  //   {
-  //   USERNAME: username,
-  //   CONFIRMLINK: confirmLink,
-  //   CONFIRMTOKEN: confirmToken,
-  // }
-  // )
+  let confirmLink = `${clientURL}/confirm-user?token=${confirmToken}&email=${email}`
+  return sendEmail({
+    to: email, 
+    CONFIRMLINK: confirmLink,
+    CONFIRMTOKEN: confirmToken,
+  })
 }
