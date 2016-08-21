@@ -16,7 +16,7 @@ export default ({ app }) => {
    */
 
   api.post(`/proxy`, (req, res) => {
-    let { userEmail, name, endpoint } = req.body
+    let { endpoint } = req.body
 
     User.findOne({ email: req.email }, (err, user) => {
 
@@ -25,7 +25,7 @@ export default ({ app }) => {
         fetch(`${brain}/${endpoint}`, {
           method: `POST`,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(req.body),
+          body: JSON.stringify({ ...req.body, user_id: user._id }),
         })
           .then(res => {
             if (res.status >= 400)
