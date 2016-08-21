@@ -33,7 +33,7 @@ export let getSubjects = () =>
 export let getSubject = ({ id, redirect }) =>
   async dispatch => {
 
-    let { documents } = await api({ endpoint: `getSubject`, id })
+    let { documents } = await api({ endpoint: `getSubject`, subj_id: id })
 
     if (documents) {
       dispatch({

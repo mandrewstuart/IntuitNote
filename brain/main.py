@@ -1,14 +1,14 @@
-from bottle import response, redirect, route, run, template, get, post, request, error, SimpleTemplate
-import os, sqlite3, html, custom_classify, vectorizer, parse_doc
+from bottle import response, redirect, route, run, template, post, request
+import os, pymysql, html
+import dictionize, dictClassify, parse_doc
 
 response.content_type = 'application/json'
 
 def escape_request(key):
     return html.escape(request.json[key])
 
-
 def connect_to_db():
-    conn = sqlite3.connect('db.file')
+    conn = pymysql.connect(host="localhost", user="ade", passwd="The A-Team", db='ade_db', use_unicode=True, charset='utf8', autocommit=True)
     return conn.cursor(), conn
 
 
@@ -19,27 +19,24 @@ def connect_to_db():
 @post('/createSubject')
 def subject_create():
     name = request.json['name']
+    user_id = request.json['user_id']
     cursor, conn = connect_to_db()
-
-    cursor.execute("INSERT INTO subjects (subj_name) VALUES ('{}')".format(name))
-
-    id = cursor.execute(
-        """
-        SELECT subj_ID FROM subjects WHERE subj_name = '{}';
-        """.format(name)).fetchall()[0][0]
-
-    conn.commit()
-    conn.close()
-
+    cursor.execute("INSERT INTO subjects (subj_name) VALUES ('{}');".format(name))
+    id = cursor.lastrowid
+    cursor.execute("INSERT INTO user_to_subj (u2s_user_ID, u2s_subj_ID) VALUES ('{}', {});".format(user_id, id))
     return { 'id': id }
 
 
 @post('/getSubjects')
 def subjects_read():
+    user_id = request.json['user_id']
     cursor, conn = connect_to_db()
-    subjects = cursor.execute('SELECT * FROM subjects;').fetchall()
-    conn.close()
-
+    cursor.execute("""SELECT subj_ID, subj_name
+                    FROM subjects s
+                    INNER JOIN user_to_subj u2s
+                        ON s.subj_ID = u2s.u2s_subj_ID
+                    WHERE u2s.u2s_user_ID = '{}';""".format(user_id))
+    subjects = cursor.fetchall()
     return {
         'subjects': [ { 'id': item[0], 'name': item[1] } for item in subjects ]
     }
@@ -47,45 +44,27 @@ def subjects_read():
 
 @post('/updateSubject')
 def subject_update():
-    name = request.json['name']
+    user_id = request.json['user_id']
     subj_id = int(request.json['subj_id'])
+    name = request.json['name']
     cursor, conn = connect_to_db()
-
     cursor.execute(
         """
-        UPDATE subjects SET subj_name = '{}' WHERE subj_ID = {};
-        """.format(name, str(subj_id)))
-
-    conn.commit()
-    conn.close()
-
+        UPDATE subjects s
+        INNER JOIN user_to_subj u2s
+            ON s.subj_ID = u2s.u2s_subj_ID
+        SET s.subj_name = '{}' WHERE s.subj_ID = {} and u2s.u2s_user_ID = '{}';
+        """.format(name, str(subj_id), user_id))
     return { 'updated': True }
 
 
 @post('/deleteSubject')
 def subject_delete():
-    id = str(int(request.json['id']))
+    user_id = request.json['user_id']
+    id = str(int(request.json['subj_id']))
     cursor, conn = connect_to_db()
-    cursor.execute('DELETE FROM subjects WHERE subj_ID = {}'.format(id))
-
-    cursor.execute(
-        """
-        DELETE FROM tags WHERE tag_sent_ID
-        IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID
-        IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = {}))
-        """.format(id))
-
-    cursor.execute(
-        """
-        DELETE FROM sentences WHERE sent_doc_ID
-        IN (SELECT doc_ID FROM documents WHERE doc_subj_ID = {})
-        """.format(id))
-
-    cursor.execute('DELETE FROM documents WHERE doc_subj_ID = {}'.format(id))
-
-    conn.commit()
-    conn.close()
-
+    cursor.execute("""DELETE s.* FROM subjects s INNER JOIN user_to_subj WHERE subj_ID = u2s_subj_ID
+                    AND subj_ID = {} and u2s_user_ID = '{}';""".format(id, user_id))
     return { 'deleted': True }
 
 
@@ -95,7 +74,8 @@ def subject_delete():
 
 @post('/createDocument')
 def create_document():
-    subj_id = str(request.json['id'])
+    user_id = request.json['user_id']
+    subj_id = str(request.json['doc_id'])
     nom = request.json['title']
     contenu = escape_request('text')
     auteur =  escape_request('author')
@@ -104,69 +84,50 @@ def create_document():
     cursor.execute(
         """
         INSERT INTO documents (doc_name, doc_subj_ID, doc_author, doc_publication)
-        VALUES ('{}', {}, '{}', '{}')
-        """.format(nom, subj_id, auteur, publication))
-    doc_ID = cursor.execute(
-        """
-        SELECT doc_ID FROM documents
-        WHERE doc_name = '{}' AND doc_subj_ID = {};
-        """.format(nom, subj_id)).fetchall()[0][0]
-    doc_ID = int(doc_ID)
+        VALUES (SELECT '{}', u2s.u2s_subj_ID, '{}', '{}'
+                FROM user_to_subj u2s
+                INNER JOIN subjects s
+                    ON s.subj_ID = u2s.u2s_subj_ID);""".format(nom, auteur, publication))
+    doc_id = cursor.lastrowid
     divise = parse_doc.parse_sentences(contenu)
-    c = cursor.execute('SELECT MAX(sent_ID) FROM sentences;').fetchall()[0][0]
-    try:
-        c = int(c)
-    except:
-        c = 1
     for s in divise:
-        c = c + 1
         cursor.execute(
             """
-            INSERT INTO sentences (sent_ID, sent_doc_ID, sent_value, sent_taggable)
-            VALUES ('{}', {}, '{}', {})
-            """.format(str(c), str(doc_ID), s, ("1" if (len(s)>5) else "0")))
-    conn.commit()
-    conn.close()
+            INSERT INTO sentences (sent_doc_ID, sent_value)
+            VALUES ({}, '{}')
+            """.format(str(doc_ID), s))
     return { 'document_ID': doc_ID }
 
 
 @post('/getSubject')
 def show_subject():
-    id = str(request.json['id'])
+    user_id = request.json['user_id']
+    id = str(request.json['subj_id'])
     cursor, conn = connect_to_db()
-
-    nom = cursor.execute(
-        'SELECT subj_name FROM subjects WHERE subj_ID = {}'.format(id)
-        ).fetchall()
-
-    docs = cursor.execute(
-        'SELECT doc_name, doc_ID FROM documents WHERE doc_subj_ID = {}'.format(id)
-        ).fetchall()
-
-    conn.close()
-
+    cursor.execute(
+        """SELECT doc_name, doc_ID, sum(CASE WHEN t.tag_id is not null then 1 else 0 end)
+        FROM documents d
+        inner join user_to_subj u2s ON {} = d.doc_subj_ID
+        inner join sentences s on s.sent_doc_ID = d.doc_ID
+        left join tags t on t.tag_sent_ID = s.sent_ID
+        WHERE u2s.u2s_user_ID = {}
+        GROUP BY doc_name, doc_ID""".format(id, user_id)
+        )
+    docs = cursor.fetchall()
     return {
-        'documents': [ { 'name': item[0], 'id': item[1] } for item in docs ]
+        'documents': [ { 'name': item[0], 'id': item[1], 'tagsCount': str(item[2]) } for item in docs ]
     }
 
 
 @post('/deleteDocument')
 def delete_document():
-    id = str(int(request.json['id']))
+    user_id = request.json['user_id']
+    id = request.json['doc_id']
     cursor, conn = connect_to_db()
-
-    cursor.execute(
-        """
-        DELETE FROM tags WHERE tag_sent_ID
-        IN (SELECT sent_ID FROM sentences WHERE sent_doc_ID = {})
-        """.format(id))
-
-    cursor.execute('DELETE FROM sentences WHERE sent_doc_ID = {}'.format(id))
-    cursor.execute('DELETE FROM documents WHERE doc_ID = {}'.format(id))
-
-    conn.commit()
-    conn.close()
-
+    cursor.execute("""DELETE d.* FROM documents d
+                    INNER JOIN user_to_subj u2s
+                        ON d.doc_subj_ID = u2s.u2s_subj_ID
+                    WHERE doc_ID = {} and u2s.u2s_user_ID = '{}'""".format(id, user_id))
     return { 'deleted': True }
 
 
@@ -176,27 +137,25 @@ def delete_document():
 
 @post('/getDocument')
 def show_document():
-    doc_id = request.json['id']
+    user_id = request.json['user_id']
+    doc_id = request.json['doc_id']
     cursor, conn = connect_to_db()
-    subj_id = cursor.execute(
-        """
-        SELECT doc_subj_ID FROM documents
-        WHERE doc_ID = {}
-        """.format(str(doc_id))).fetchall()[0][0]
-    nom = cursor.execute(
-        """
-        SELECT doc_name FROM documents
-        WHERE doc_ID = {}
-        """.format(str(doc_id))).fetchall()[0][0]
-    sentences = cursor.execute(
+    cursor.execute("""SELECT s.subj_name, s.subj_id, d.doc_id
+                    FROM user_to_subj u2s
+                    INNER JOIN subjects s
+                        ON s.subj_ID = u2s.u2s_subj_ID
+                    INNER JOIN documents d
+                        ON d.doc_subj_ID = s.subj_ID
+                    WHERE d.doc_ID = {}
+                    AND u2s.u2s_user_ID = {}""".format(doc_id, user_id))
+    subj_id, nom, id = cursor.fetchall()[0]
+    cursor.execute(
         """
         SELECT s.sent_value, s.sent_ID, COALESCE(t.tag_value, ''), COALESCE(t.tag_id, '')
         FROM sentences s LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID
         WHERE sent_doc_ID = {} ORDER BY s.sent_ID
-        """.format(str(doc_id))).fetchall()
-
-    conn.close()
-
+        """.format(str(id)))
+    sentences = cursor.fetchall()
     return {
         'document': {
             'subj_id': subj_id,
@@ -206,7 +165,7 @@ def show_document():
                 {
                     'value': html.unescape(x[0]),
                     'id': x[1],
-                    'tag_value': x[2],
+                    'tag_value': html.unescape(x[2]),
                     'tag_id': x[3]
                 }
                 for x in sentences
@@ -221,75 +180,93 @@ def show_document():
 
 @post('/createTag')
 def tag():
-    phrase = str(request.json['id'])
+    user_id = request.json['user_id']
+    phrase = str(request.json['sent_id'])
     marque = escape_request('value')
-
     cursor, conn = connect_to_db()
-
     cursor.execute(
         """
-        INSERT INTO tags (tag_sent_ID, tag_value) VALUES ({}, '{}')
-        """.format(phrase, marque))
-
-    tag_id = cursor.execute(
-        """
-        SELECT tag_id FROM tags
-        WHERE tag_sent_ID = {} AND tag_value = '{}'
-        """.format(phrase, marque)).fetchall()[0][0]
-
-    conn.commit()
-    conn.close()
-
-    return { 'tag_id': int(tag_id) }
+        INSERT INTO tags (tag_sent_ID, tag_value)
+        VALUES (SELECT {}, '{}'
+            FROM user_to_subj u2s
+            INNER JOIN documents d
+                ON d.doc_subj_id = u2s.u2s_subj_ID
+            INNER JOIN sentences s
+                ON s.sent_doc_ID = d.doc_ID
+            WHERE s.sent_ID = {}
+            AND u2s.u2s_user_ID = {});""".format(phrase, marque, phrase, user_id))
+    tag_id = cursor.lastrowid
+    return { 'tag_id': tag_id }
 
 
-@post('/reviewTags/<subj_ID>')
-def review(subj_ID):
-    cursor, conn = connect_to_db()
-    tagsData = {}
+@post('/reviewTags')
+def review():
+    user_id = request.json['user_id']
     subj_id = int(request.json.get('subj_id'))
-    tagsData['subj_id'] = subj_id
-    subj_name = cursor.execute("SELECT subj_name FROM subjects WHERE subj_ID = " + subj_id).fetchall()[0][0]
-    tagsData['subj_name'] = subj_name
-    data = cursor.execute("""SELECT
+    cursor, conn = connect_to_db()
+    cursor.execute("""SELECT subj_name, subj_id
+    FROM subjects s
+    INNER JOIN user_to_subj u2s
+        ON s.subj_ID = u2s.u2s_subj_ID
+    WHERE subj_ID = {}
+    AND u2s.u2s_user_ID = '{}'""".format(str(subj_id), user_id))
+    subj_name, subj_id = cursor.fetchall()[0]
+    output = {'subject_name': subj_name}
+    output['subectj_id'] = subj_id
+    cursor.execute("""SELECT
                 d.doc_name
                 , d.doc_ID
+                , se.sent_id
                 , se.sent_value
                 , t.tag_value
                 , t.tag_ID
                 FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
-                WHERE doc_subj_ID = """ + str(subj_ID) + " ORDER BY se.sent_ID ASC").fetchall()
-    doc_id = -1
-    documents = []
-    for row in data:
-        if (int(row[1])!=doc_id):
-            if (doc_id != -1):
-                documents.append(docData)
-            docData = {}
-            docData['document_name'] = row[0]
-            docData['document_id'] = int(row[1])
-    sujet = cursor.execute("SELECT subj_name FROM subjects WHERE subj_ID = " + str(subj_ID)).fetchall()[0][0]
-    conn.close()
-    return template('tags_review', nom = sujet, rows = data)
+                WHERE doc_subj_ID = {} ORDER BY se.sent_ID ASC""".format(subj_id))
+    data = cursor.fetchall()
+    output = []
+    for x in data:
+        output.append({'doc_name': x[0],
+        'doc_ID': x[1],
+        'sent_value': html.unescape(x[3]),
+        'sent_ID': x[2],
+        'tag_value': html.unescape(x[4]),
+        'tag_ID': x[5]})
+    return { 'output': output }
 
 
+@post('/deleteTag')
+def delete_tag():
+    user_id = request.json['user_id']
+    id = str(int(request.json['id']))
+    cursor, conn = connect_to_db()
+    cursor.execute("""DELETE t.* FROM tags t
+    INNER JOIN sentences s
+        ON t.tag_sent_ID = s.sent_ID
+    INNER JOIN documents d
+        ON d.doc_ID = s.sent_doc_ID
+    INNER JOIN user_to_subj u2s
+        ON u2s.u2s_subj_ID = d.doc_subj_id
+    WHERE tag_ID = {}
+    AND u2s.u2s_user_ID = '{}'""".format(id, user_id))
+    return { 'deleted': True }
+
+
+#to secure
 @post('/autoTag')
 def auto_tag():
-    #check if there are any tags in that subject yet
-    cursor, conn = connect_to_db()
-
+    user_id = request.json['user_id']
     doc_id = request.json['id']
-
-    tag_count = cursor.execute("""SELECT
+    cursor, conn = connect_to_db()
+    cursor.execute("""SELECT
                 COUNT(*)
                 FROM  documents d
                 INNER JOIN sentences se ON d.doc_ID = se.sent_doc_ID
                 INNER JOIN tags t ON se.sent_ID = t.tag_sent_ID
                 WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
-                                    WHERE doc_ID = """ + str(doc_id) + ") AND doc_ID <> " + str(doc_id)).fetchall()[0][0]
-
+                                    WHERE doc_ID = """ + str(doc_id) + ") OR doc_subj_ID = 13")
+    tag_count = cursor.fetchall()[0][0]
     #inform the user if they still need to tag something already
     if (tag_count == 0):
         return {
@@ -297,52 +274,39 @@ def auto_tag():
         }
     else:
     #pull with and without tags separately
-        data = cursor.execute("""SELECT sent_value, tag_value, sent_ID
+        cursor.execute("""SELECT sent_value, tag_value, sent_ID
                         FROM sentences s
                         LEFT JOIN tags t ON s.sent_ID = t.tag_sent_ID
                         WHERE sent_doc_ID in (SELECT DISTINCT doc_ID
                         FROM documents
-                        WHERE doc_subj_ID = (SELECT doc_subj_ID FROM documents
-                                            WHERE doc_ID = """ + str(doc_id) + """)
-                        AND doc_ID <> """ + str(doc_id) + ") ORDER BY sent_ID").fetchall()
-        output = []
-        test_output = []
+                        WHERE doc_ID <> """ + str(doc_id) +
+                        """ AND doc_subj_ID = (SELECT doc_subj_ID FROM documents
+                                            WHERE doc_ID = """ + str(doc_id) + "))")
+        data = cursor.fetchall()
+        training_data = []
         for x in data:
-            test_output.append([ html.unescape(x[0]) , x[1] ])
-        #import dictionize
-        #print(dictionize.dictionize(test_output))
-        for x in data:
-            output.append([html.unescape(x[0])])
+            training_data.append([ html.unescape(x[0]), x[2], x[1] ])
+        cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE trim(replace(sent_value, "\t","")) <> "<br>" AND length(trim(sent_value)) > 10 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID')
+        target = cursor.fetchall()
+        test_data = []
+        for x in target:
+            test_data.append([html.unescape(x[0]), x[1]])
+        #create TF dictionaries
+        X = dictionize.dictionize(training_data, 1)
+        Y = dictionize.dictionize(test_data)
+        X_plus_Y = {}
+        X_plus_Y.update(X['tf'])
+        X_plus_Y.update(Y['tf'])
+        #create IDF dictionary
+        idf = dictionize.idfize(X_plus_Y)
+        #determine threshold
+        #threshold = dictClassify.getAvgDist(X_plus_Y, idf)
+        cursor.execute("select val from env_vals where key = 'threshold';")
+        threshold = cursor.fetchall()[0][0]
         #machine learning
-        target = cursor.execute('SELECT sent_value, sent_ID FROM sentences WHERE length(sent_value) > 1 AND sent_doc_ID = ' + str(doc_id) + ' ORDER BY sent_ID').fetchall()
-        clean_target = []
-        for x in target:
-            clean_target.append([html.unescape(x[0])])
-        Z = []
-        for x in target:
-            Z.append([x[0]])
-        A = output + Z
-        A = vectorizer.vectorize(A)
-        Y = []
-        for x in data:
-            Y.append( x[1] if (x[1]!= None) else 'None' )
-        X = A[:len(output)]
-        Z = A[len(output):]
-        cusster = custom_classify.proxit(X, Z, Y)
-        suggestions = cusster[0]
-        suggested = []
-        for x in range(0,len(suggestions)):
-            if (suggestions[x][1] != 'None'):
-                suggested.append({
-                    'sentence_id': target[0][1] + x,
-                    'tag_value': suggestions[x][1],
-                    'distance': suggestions[x][2]
-                })
-
-    conn.commit()
+        suggestions = dictClassify.distProxit(threshold, X['labels'], Y['tf'], idf)
     conn.close()
-    print(suggested)
-    return { 'suggestedTags': suggested }
+    return { 'suggestedTags': suggestions }
 
 
 run(host="localhost", port=5000, reloader=True)

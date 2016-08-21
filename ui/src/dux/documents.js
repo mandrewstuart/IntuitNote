@@ -40,7 +40,7 @@ export let createDocument = ({ title, author, text, publication, id }) =>
 
     else {
       let { document_ID: doc_id } = await api({
-        title, author, text, publication, id,
+        title, author, text, publication, subj_id: id,
         endpoint: `createDocument`,
       })
 
@@ -58,7 +58,7 @@ export let editDocument = document => ({ type: EDIT_DOCUMENT, payload: document 
 export let deleteDocument = ({ docId, subjId }) =>
   async dispatch => {
     await api({
-      docId, subjId,
+      doc_id: docId, subj_id: subjId,
       endpoint: `deleteDocument`,
     })
 
@@ -76,7 +76,7 @@ export let tagSentence = ({ sentence }) => ({
 export let createTag = ({ id, value }) =>
   async dispatch => {
     let { tag_id } = await api({
-      id, value,
+      sent_id: id, value,
       endpoint: `createTag`,
     })
 
@@ -97,7 +97,7 @@ export let createTag = ({ id, value }) =>
 
 export let autoTag = ({ id }) =>
   async dispatch => {
-    let { suggestedTags, message } = await api({ id, endpoint: `autoTag` })
+    let { suggestedTags, message } = await api({ doc_id: id, endpoint: `autoTag` })
 
     if (!message && suggestedTags.length) {
       dispatch({
