@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
+import { sendWelcomeEmail } from '../utils/email'
 
 import crypto from 'crypto'
 
@@ -29,6 +30,8 @@ export default ({
         else {
 
           let user = new User({ email, password: doubleHash(password), plan: `free` })
+
+          sendWelcomeEmail({ email })
 
           user.save((err, user) => {
             if (err) throw err
