@@ -4,6 +4,19 @@ DROP DATABASE IF EXISTS ade_db;
 CREATE DATABASE ade_db;
 use ade_db;
 
+CREATE TABLE users (
+user_ID bigint unsigned auto_increment primary key,
+user_name varchar(255) charset utf8,
+user_email varchar(255) charset utf8,
+subj_created_date date
+);
+
+CREATE TABLE user_to_subj (
+u2s_ID bigint unsigned auto_increment primary key,
+u2s_user_ID bigint,
+u2s_subj_ID bigint
+);
+
 CREATE TABLE subjects (
 subj_ID bigint unsigned auto_increment primary key,
 subj_name varchar(255) charset utf8,
