@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import Tooltip from 'material-ui/internal/Tooltip'
-import { tagSentence, autoTag } from 'dux/documents'
+import { tagSentence, autoTag, discardSuggestions } from 'dux/documents'
 import { togglePopover } from 'dux/popover'
 import Suggestion from './Suggestion'
 
@@ -18,13 +18,24 @@ let Document = ({
         <div className="name-row-type">DOCUMENT/</div>
         <div className="document-title">{ d.name || d.doc_name }</div>
 
-        <button
-          className="autotag"
-          onClick={ () => dispatch(autoTag({ id: d.doc_id })) }
-        >
-          AUTO TAG
-          <i className="fa fa-magic" />
-        </button>
+        {!suggestedTags.length &&
+          <button
+            className="autotag"
+            onClick={ () => dispatch(autoTag({ id: d.doc_id })) }
+          >
+            AUTO TAG
+            <i className="fa fa-magic" />
+          </button>
+        }
+        {!!suggestedTags.length &&
+          <button
+            className="delete-btn discard-all"
+            onClick={ () => dispatch(discardSuggestions()) }
+          >
+            DISCARD ALL SUGGESTIONS
+            <i className="fa fa-trash-o" />
+          </button>
+        }
       </div>
 
       <div>
