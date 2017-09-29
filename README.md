@@ -1,3 +1,6 @@
+This was a collaborative side project between Alex Wilmer and Andrew Matte to make a system for taking notes on documents that would ideally predict labels on subsequent documents.
+
+
 # Apprentice Data Extractor
 
 ## Dependencies
